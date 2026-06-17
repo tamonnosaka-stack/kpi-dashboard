@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>個人別KPIダッシュボード</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --txt:#1e293b; --muted:#64748b; --line:#e2e8f0;
+    --ok:#16a34a; --okbg:#dcfce7; --warn:#d97706; --warnbg:#fef3c7;
+    --bad:#dc2626; --badbg:#fee2e2; --accent:#2563eb; --accentbg:#dbeafe;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;
+       background:var(--bg);color:var(--txt);padding:20px 24px 60px;}
+  h1{font-size:22px;margin:0;}
+  .sub{color:var(--muted);font-size:13px;margin:4px 0 0;}
+  h2{font-size:16px;margin:30px 0 14px;display:flex;align-items:center;gap:8px;}
+  h2 .n{background:var(--accent);color:#fff;width:24px;height:24px;border-radius:50%;
+        display:inline-flex;align-items:center;justify-content:center;font-size:13px;}
+  .topbar{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;
+          margin-top:16px;}
+  .filter{display:flex;align-items:center;gap:8px;background:var(--card);
+          padding:10px 14px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .filter label{font-size:13px;color:var(--muted);}
+  select{background:#fff;color:var(--txt);border:1px solid var(--line);border-radius:8px;
+         padding:7px 12px;font-size:14px;font-weight:600;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px;}
+  .stat{background:var(--card);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .stat .k{font-size:12px;color:var(--muted);}
+  .stat .v{font-size:26px;font-weight:800;margin-top:2px;}
+  .stat .v small{font-size:13px;font-weight:600;color:var(--muted);}
+  .stat.hot{background:var(--accent);color:#fff;}
+  .stat.hot .k,.stat.hot .v small{color:#dbeafe;}
+  .stat.hot .note{font-size:10px;color:#e0ecff;margin-top:7px;line-height:1.5;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px;}
+  .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .card h3{font-size:14px;margin:0 0 12px;}
+  .card h3 .hint{font-weight:400;font-size:12px;color:var(--muted);margin-left:6px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line);}
+  th:first-child,td.m{text-align:left;}
+  th{color:var(--muted);font-weight:600;font-size:12px;}
+  td.big{font-weight:800;font-size:15px;}
+  td.accent{color:var(--accent);}
+  tr.team{background:var(--accentbg);font-weight:700;}
+  .u{color:var(--muted);font-weight:400;font-size:11px;}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;}
+  .pill.ok{background:var(--okbg);color:var(--ok);}
+  .pill.warn{background:var(--warnbg);color:var(--warn);}
+  .pill.bad{background:var(--badbg);color:var(--bad);}
+  .bar{height:7px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:5px;}
+  .bar>span{display:block;height:100%;border-radius:4px;}
+  .behind{background:var(--bad);color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;margin-left:6px;}
+  .nv{font-size:14px;line-height:1.8;margin:0 0 10px;padding-left:10px;border-left:3px solid var(--accentbg);}
+  .controls{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
+  canvas{max-height:340px;}
+  .needcard{background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff;}
+  .needcard h3,.needcard .hint{color:#fff;}
+  .needcard table th{color:#c7d2fe;}
+  .needcard th,.needcard td{border-bottom:1px solid rgba(255,255,255,.18);}
+  .needcard td.big{color:#fff;}
+  .needcard .u{color:#c7d2fe;}
+  footer{color:var(--muted);font-size:12px;margin-top:36px;line-height:1.7;}
+  code{background:#e2e8f0;padding:1px 6px;border-radius:5px;}
+</style>
+</head>
+<body>
+  <h1>個人別KPIダッシュボード</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="topbar">
+    <div class="filter">
+      <label>表示するメンバー</label>
+      <select id="memberFilter"></select>
+    </div>
+    <div class="sub" id="deadlineNote"></div>
+  </div>
+
+  <div class="cards" id="statCards"></div>
+
+  <h2><span class="n">1</span>今月の達成に必要な架電数</h2>
+  <div class="card needcard">
+    <h3>必要架電数<span class="hint">今月の有効商談数から逆算 ／ 残り有効商談 ÷ アポ獲得率 ＝ 必要着電、÷着電率 ＝ 必要架電。締め日まで残り日数で1日ペースを算出。</span></h3>
+    <div id="needTable"></div>
+  </div>
+
+  <h2><span class="n">2</span>今月の達成ギャップ</h2>
+  <div class="grid" id="gapCards"></div>
+
+  <h2><span class="n">3</span>月次推移</h2>
+  <div class="card">
+    <div class="controls">
+      <div><label class="u">指標 </label><select id="trendMetric"></select></div>
+      <div><label class="u">表示 </label>
+        <select id="trendMode">
+          <option value="actual">実績</option>
+          <option value="achievement">達成率(%)</option>
+        </select></div>
+    </div>
+    <canvas id="trendChart"></canvas>
+  </div>
+
+  <h2><span class="n">4</span>今月の総括</h2>
+  <div class="card"><div id="narrative"></div></div>
+
+  <footer>
+    データ元: <span id="srcNote"></span><br>
+    本ダッシュボードは <code>data.json</code> から自動生成されています。
+    データを更新して <code>python3 kpi_dashboard.py</code> を再実行すると最新化されます。
+  </footer>
+
+<script>
+const BUNDLE = {"source": "個人別KPI管理 (Googleスプレッドシート 15YU9bxOs-g_ZefBKKqRGngPJ4IgaPwj02K1vUsenC1k)", "members": ["岡田 健吾", "飛田 菜々花", "松澤 恵太", "岡田 雄太", "久保田 やや子", "野坂 汰門", "番場 円香", "CLINICS事務局"], "currentMonthLabel": "6月", "result": {"year": 2026, "month": 6, "as_of": "2026-06-17", "deadline": "2026-06-23", "last_business_day": "2026-06-30", "total_business_days": 17, "elapsed_business_days": 12, "remaining_business_days": 5, "connect_rate": 0.5, "daily_dial_cap": 60, "call_need": [{"member": "岡田 健吾", "v_target": 23, "v_actual": 18, "remaining_v": 5, "rate": 9.8, "rate_src": "今月実績", "connect_rate": 0.2740286298568507, "connect_src": "今月実測", "need_call": 51.0204081632653, "need_dial": 186.1864148644532, "pace_call": 10.204081632653061, "pace_dial": 37.23728297289064, "over_cap": false}, {"member": "飛田 菜々花", "v_target": 23, "v_actual": 22, "remaining_v": 1, "rate": 12.2, "rate_src": "今月実績", "connect_rate": 0.19591141396933562, "connect_src": "今月実測", "need_call": 8.19672131147541, "need_dial": 41.83891660727013, "pace_call": 1.6393442622950818, "pace_dial": 8.367783321454025, "over_cap": false}, {"member": "松澤 恵太", "v_target": 21, "v_actual": 12, "remaining_v": 9, "rate": 8.4, "rate_src": "今月実績", "connect_rate": 0.2559241706161137, "connect_src": "今月実測", "need_call": 107.14285714285714, "need_dial": 418.6507936507937, "pace_call": 21.428571428571427, "pace_dial": 83.73015873015873, "over_cap": true}, {"member": "岡田 雄太", "v_target": 20, "v_actual": 11, "remaining_v": 9, "rate": 10.7, "rate_src": "今月実績", "connect_rate": 0.25565610859728505, "connect_src": "今月実測", "need_call": 84.11214953271028, "need_dial": 329.0050450748491, "pace_call": 16.822429906542055, "pace_dial": 65.80100901496982, "over_cap": true}, {"member": "久保田 やや子", "v_target": 17, "v_actual": 3, "remaining_v": 14, "rate": 2.9, "rate_src": "今月実績", "connect_rate": 0.11686143572621036, "connect_src": "今月実測", "need_call": 482.75862068965523, "need_dial": 4131.034482758621, "pace_call": 96.55172413793105, "pace_dial": 826.2068965517243, "over_cap": true}, {"member": "野坂 汰門", "v_target": 15, "v_actual": 12, "remaining_v": 3, "rate": 7.7, "rate_src": "今月実績", "connect_rate": 0.22795698924731184, "connect_src": "今月実測", "need_call": 38.96103896103896, "need_dial": 170.91399166870863, "pace_call": 7.792207792207792, "pace_dial": 34.18279833374173, "over_cap": false}, {"member": "番場 円香", "v_target": 15, "v_actual": 7, "remaining_v": 8, "rate": 8.6, "rate_src": "今月実績", "connect_rate": 0.13106796116504854, "connect_src": "今月実測", "need_call": 93.0232558139535, "need_dial": 709.7329888027564, "pace_call": 18.6046511627907, "pace_dial": 141.94659776055127, "over_cap": true}, {"member": "CLINICS事務局", "v_target": 15, "v_actual": 5, "remaining_v": 10, "rate": null, "rate_src": "—", "connect_rate": 0.5, "connect_src": "既定値", "need_call": null, "need_dial": null, "pace_call": null, "pace_dial": null, "over_cap": false}], "gap_metrics": {"call": {"name": "着電数", "unit": "件", "rows": [{"member": "岡田 健吾", "target": 250, "actual": 134, "gap": 116, "pace": 23.2, "achievement": 53.6, "expected": 176.47058823529412, "behind": true}, {"member": "飛田 菜々花", "target": 200, "actual": 115, "gap": 85, "pace": 17.0, "achievement": 57.49999999999999, "expected": 141.1764705882353, "behind": true}, {"member": "松澤 恵太", "target": 200, "actual": 108, "gap": 92, "pace": 18.4, "achievement": 54.0, "expected": 141.1764705882353, "behind": true}, {"member": "岡田 雄太", "target": 200, "actual": 113, "gap": 87, "pace": 17.4, "achievement": 56.49999999999999, "expected": 141.1764705882353, "behind": true}, {"member": "久保田 やや子", "target": 200, "actual": 70, "gap": 130, "pace": 26.0, "achievement": 35.0, "expected": 141.1764705882353, "behind": true}, {"member": "野坂 汰門", "target": 200, "actual": 106, "gap": 94, "pace": 18.8, "achievement": 53.0, "expected": 141.1764705882353, "behind": true}, {"member": "番場 円香", "target": 200, "actual": 81, "gap": 119, "pace": 23.8, "achievement": 40.5, "expected": 141.1764705882353, "behind": true}, {"member": "CLINICS事務局", "target": 250, "actual": 0, "gap": 250, "pace": 50.0, "achievement": 0.0, "expected": 176.47058823529412, "behind": true}], "team": {"target": 1700, "actual": 727, "gap": 973, "pace": 194.6, "achievement": 42.76470588235294}}, "valid_meeting": {"name": "有効商談数", "unit": "件", "rows": [{"member": "岡田 健吾", "target": 23, "actual": 18, "gap": 5, "pace": 1.0, "achievement": 78.26086956521739, "expected": 16.235294117647058, "behind": false}, {"member": "飛田 菜々花", "target": 23, "actual": 22, "gap": 1, "pace": 0.2, "achievement": 95.65217391304348, "expected": 16.235294117647058, "behind": false}, {"member": "松澤 恵太", "target": 21, "actual": 12, "gap": 9, "pace": 1.8, "achievement": 57.14285714285714, "expected": 14.823529411764707, "behind": true}, {"member": "岡田 雄太", "target": 20, "actual": 11, "gap": 9, "pace": 1.8, "achievement": 55.00000000000001, "expected": 14.117647058823529, "behind": true}, {"member": "久保田 やや子", "target": 17, "actual": 3, "gap": 14, "pace": 2.8, "achievement": 17.647058823529413, "expected": 12.0, "behind": true}, {"member": "野坂 汰門", "target": 15, "actual": 12, "gap": 3, "pace": 0.6, "achievement": 80.0, "expected": 10.588235294117647, "behind": false}, {"member": "番場 円香", "target": 15, "actual": 7, "gap": 8, "pace": 1.6, "achievement": 46.666666666666664, "expected": 10.588235294117647, "behind": true}, {"member": "CLINICS事務局", "target": 15, "actual": 5, "gap": 10, "pace": 2.0, "achievement": 33.33333333333333, "expected": 10.588235294117647, "behind": true}], "team": {"target": 149, "actual": 90, "gap": 59, "pace": 11.8, "achievement": 60.40268456375839}}, "acquired_meeting": {"name": "月の商談獲得数", "unit": "件", "rows": [{"member": "岡田 健吾", "target": 17, "actual": 13, "gap": 4, "pace": 0.8, "achievement": 76.47058823529412, "expected": 12.0, "behind": false}, {"member": "飛田 菜々花", "target": 17, "actual": 14, "gap": 3, "pace": 0.6, "achievement": 82.35294117647058, "expected": 12.0, "behind": false}, {"member": "松澤 恵太", "target": 16, "actual": 9, "gap": 7, "pace": 1.4, "achievement": 56.25, "expected": 11.294117647058824, "behind": true}, {"member": "岡田 雄太", "target": 15, "actual": 12, "gap": 3, "pace": 0.6, "achievement": 80.0, "expected": 10.588235294117647, "behind": false}, {"member": "久保田 やや子", "target": 18, "actual": 2, "gap": 16, "pace": 3.2, "achievement": 11.11111111111111, "expected": 12.705882352941176, "behind": true}, {"member": "野坂 汰門", "target": 16, "actual": 8, "gap": 8, "pace": 1.6, "achievement": 50.0, "expected": 11.294117647058824, "behind": true}, {"member": "番場 円香", "target": 11, "actual": 7, "gap": 4, "pace": 0.8, "achievement": 63.63636363636363, "expected": 7.764705882352941, "behind": true}, {"member": "CLINICS事務局", "target": 15, "actual": 5, "gap": 10, "pace": 2.0, "achievement": 33.33333333333333, "expected": 10.588235294117647, "behind": true}], "team": {"target": 125, "actual": 70, "gap": 55, "pace": 11.0, "achievement": 56.00000000000001}}}, "narrative": {"__all__": {"valid": "① 今月の有効商談数（総合計）：今月 112件（目標150件・達成率75%）。例月平均 106.0件 を6.0件上回る（月途中）。", "acquired": "② 今月の月の商談獲得数（総合計）：今月 90件（目標151件・達成率60%）。例月平均 112.4件 を22.4件下回る（月途中）。", "need": "③ 現状のアポ獲得率（全体実効） 5.7%・着電率 14% の場合、残り有効商談 49件 の獲得に必要なのは 着電 865件（1日 173件）／ 架電 5987件（1日 1197件）。（CLINICS事務局 は商談化率データがなく未算入）", "action": "④ 施策：1日必要架電 1197件 は上限 60件 を超過。架電量だけでは到達できないため、アポ獲得率（現5.7%）の引き上げ、着電率の改善、特に商談化率が低い 久保田 やや子・野坂 汰門 のトーク/リスト改善 が必要。"}, "岡田 健吾": {"valid": "① 今月の有効商談数：今月 18件（目標23件・達成率78%）。例月平均 18.0件 を0.0件上回る（月途中）。", "acquired": "② 今月の月の商談獲得数：今月 13件（目標17件・達成率76%）。例月平均 18.4件 を5.4件下回る（月途中）。", "need": "③ 現状のアポ獲得率 9.8%・着電率 27% の場合、残り有効商談 5件 の獲得に必要なのは 着電 51件（1日 10件）／ 架電 186件（1日 37件）。", "action": "④ 施策：1日必要架電 37件 は上限 60件 内。現状の獲得率なら架電量の積み増しで到達可能。"}, "飛田 菜々花": {"valid": "① 今月の有効商談数：今月 22件（目標23件・達成率96%）。例月平均 23.4件 を1.4件下回る（月途中）。", "acquired": "② 今月の月の商談獲得数：今月 14件（目標17件・達成率82%）。例月平均 25.0件 を11.0件下回る（月途中）。", "need": "③ 現状のアポ獲得率 12.2%・着電率 20% の場合、残り有効商談 1件 の獲得に必要なのは 着電 8件（1日 2件）／ 架電 42件（1日 8件）。", "action": "④ 施策：1日必要架電 8件 は上限 60件 内。現状の獲得率なら架電量の積み増しで到達可能。"}, "松澤 恵太": {"valid": "① 今月の有効商談数：今月 12件（目標21件・達成率57%）。例月平均 20.2件 を8.2件下回る（月途中）。", "acquired": "② 今月の月の商談獲得数：今月 9件（目標16件・達成率56%）。例月平均 20.4件 を11.4件下回る（月途中）。", "need": "③ 現状のアポ獲得率 8.4%・着電率 26% の場合、残り有効商談 9件 の獲得に必要なのは 着電 107件（1日 21件）／ 架電 419件（1日 84件）。", "action": "④ 施策：1日必要架電 84件 は上限 60件 を超過。架電量だけでは到達できないため、アポ獲得率（現8.4%）の引き上げ、着電率の改善 が必要。"}, "岡田 雄太": {"valid": "① 今月の有効商談数：今月 11件（目標20件・達成率55%）。例月平均 11.6件 を0.6件下回る（月途中）。", "acquired": "② 今月の月の商談獲得数：今月 12件（目標15件・達成率80%）。例月平均 11.8件 を0.2件上回る（月途中）。", "need": "③ 現状のアポ獲得率 10.7%・着電率 26% の場合、残り有効商談 9件 の獲得に必要なのは 着電 84件（1日 17件）／ 架電 329件（1日 66件）。", "action": "④ 施策：1日必要架電 66件 は上限 60件 を超過。架電量だけでは到達できないため、アポ獲得率（現10.7%）の引き上げ、着電率の改善 が必要。"}, "久保田 やや子": {"valid": "① 今月の有効商談数：今月 3件（目標17件・達成率18%）。例月平均 5.2件 を2.2件下回る（月途中）。", "acquired": "② 今月の月の商談獲得数：今月 2件（目標18件・達成率11%）。例月平均 5.2件 を3.2件下回る（月途中）。", "need": "③ 現状のアポ獲得率 2.9%・着電率 12% の場合、残り有効商談 14件 の獲得に必要なのは 着電 483件（1日 97件）／ 架電 4131件（1日 826件）。", "action": "④ 施策：1日必要架電 826件 は上限 60件 を超過。架電量だけでは到達できないため、アポ獲得率（現2.9%）の引き上げ、着電率の改善 が必要。"}, "野坂 汰門": {"valid": "① 今月の有効商談数：今月 12件（目標15件・達成率80%）。例月平均 1.6件 を10.4件上回る（月途中）。", "acquired": "② 今月の月の商談獲得数：今月 8件（目標16件・達成率50%）。例月平均 2.4件 を5.6件上回る（月途中）。", "need": "③ 現状のアポ獲得率 7.7%・着電率 23% の場合、残り有効商談 3件 の獲得に必要なのは 着電 39件（1日 8件）／ 架電 171件（1日 34件）。", "action": "④ 施策：1日必要架電 34件 は上限 60件 内。現状の獲得率なら架電量の積み増しで到達可能。"}, "番場 円香": {"valid": "① 今月の有効商談数：今月 7件（目標15件・達成率47%）。例月平均 2.8件 を4.2件上回る（月途中）。", "acquired": "② 今月の月の商談獲得数：今月 7件（目標11件・達成率64%）。例月平均 2.8件 を4.2件上回る（月途中）。", "need": "③ 現状のアポ獲得率 8.6%・着電率 13% の場合、残り有効商談 8件 の獲得に必要なのは 着電 93件（1日 19件）／ 架電 710件（1日 142件）。", "action": "④ 施策：1日必要架電 142件 は上限 60件 を超過。架電量だけでは到達できないため、アポ獲得率（現8.6%）の引き上げ、着電率の改善 が必要。"}, "CLINICS事務局": {"valid": "① 今月の有効商談数：今月 5件（目標15件・達成率33%）。例月平均 11.2件 を6.2件下回る（月途中）。", "acquired": "② 今月の月の商談獲得数：今月 5件（目標15件・達成率33%）。例月平均 11.8件 を6.8件下回る（月途中）。", "need": "③ 必要架電数：残り有効商談はなく、今月分は到達済み。", "action": "④ 施策：到達済みのため追加施策は不要。"}}}, "chart": {"metrics": {"call": {"name": "着電数", "unit": "件", "kind": "count", "months": ["1月", "2月", "3月", "4月", "5月", "6月"], "series": {"岡田 健吾": {"target": [250, 250, 250, 250, 250, 250], "actual": [204, 190, 276, 293, 200, 134]}, "飛田 菜々花": {"target": [200, 200, 200, 200, 200, 200], "actual": [219, 176, 227, 290, 247, 115]}, "松澤 恵太": {"target": [200, 200, 200, 200, 200, 200], "actual": [208, 211, 236, 208, 213, 108]}, "岡田 雄太": {"target": [150, 200, 200, 200, 200, 200], "actual": [139, 171, 234, 193, 161, 113]}, "久保田 やや子": {"target": [0, 30, 150, 200, 200, 200], "actual": [0, 0, 72, 232, 193, 70]}, "野坂 汰門": {"target": [0, 30, 150, 200, 200, 200], "actual": [0, 0, 84, 163, 157, 106]}, "番場 円香": {"target": [0, 30, 150, 200, 200, 200], "actual": [0, 23, 248, 168, 138, 81]}, "CLINICS事務局": {"target": [0, 150, 200, 250, 250, 250], "actual": [0, 0, 0, 0, 0, 0]}}}, "valid_meeting": {"name": "有効商談数", "unit": "件", "kind": "count", "months": ["1月", "2月", "3月", "4月", "5月", "6月", "7月"], "series": {"岡田 健吾": {"target": [20, 30, 30, 20, 20, 23, 0], "actual": [12, 22, 15, 20, 21, 18, 0]}, "飛田 菜々花": {"target": [36, 20, 20, 23, 25, 23, 0], "actual": [35, 20, 17, 26, 19, 22, 1]}, "松澤 恵太": {"target": [20, 20, 20, 20, 25, 21, 0], "actual": [20, 19, 20, 24, 18, 12, 0]}, "岡田 雄太": {"target": [12, 16, 20, 20, 20, 20, 0], "actual": [4, 6, 15, 15, 18, 11, 2]}, "久保田 やや子": {"target": [0, 0, 5, 20, 15, 17, 20], "actual": [0, 1, 1, 9, 15, 3, 1]}, "野坂 汰門": {"target": [0, 0, 5, 12, 12, 15, 20], "actual": [0, 0, 1, 3, 4, 12, 0]}, "番場 円香": {"target": [0, 0, 3, 9, 12, 15, 0], "actual": [0, 0, 3, 4, 7, 7, 0]}, "CLINICS事務局": {"target": [10, 10, 15, 15, 15, 15, 15], "actual": [7, 14, 7, 12, 16, 5, 0]}}}, "acquired_meeting": {"name": "月の商談獲得数", "unit": "件", "kind": "count", "months": ["1月", "2月", "3月", "4月", "5月", "6月", "7月"], "series": {"岡田 健吾": {"target": [23, 30, 28, 20, 21, 17, 33], "actual": [16, 20, 17, 17, 22, 13, 13]}, "飛田 菜々花": {"target": [32, 20, 21, 24, 25, 17, 23], "actual": [39, 24, 14, 25, 23, 14, 14]}, "松澤 恵太": {"target": [20, 20, 20, 21, 24, 16, 23], "actual": [25, 19, 22, 23, 13, 9, 9]}, "岡田 雄太": {"target": [13, 17, 20, 20, 20, 15, 23], "actual": [5, 10, 16, 13, 15, 12, 12]}, "久保田 やや子": {"target": [0, 1, 9, 19, 16, 18, 6], "actual": [0, 1, 3, 10, 12, 2, 2]}, "野坂 汰門": {"target": [0, 1, 7, 12, 13, 16, 6], "actual": [0, 0, 1, 5, 6, 8, 8]}, "番場 円香": {"target": [0, 1, 5, 10, 13, 11, 6], "actual": [0, 1, 4, 4, 5, 7, 7]}, "CLINICS事務局": {"target": [10, 11, 15, 15, 15, 15, 7], "actual": [10, 14, 9, 10, 16, 5, 5]}}}, "conversion_rate": {"name": "商談化率（着電⇨商談化）", "unit": "%", "kind": "rate", "months": ["1月", "2月", "3月", "4月", "5月", "6月"], "series": {"岡田 健吾": {"target": [9.0, 12.0, 11.0, 8.0, 8.3, 6.9], "actual": [7.8, 10.5, 6.2, 5.8, 11.0, 9.8]}, "飛田 菜々花": {"target": [16.0, 10.0, 10.4, 11.8, 12.3, 8.6], "actual": [17.8, 13.6, 6.2, 8.6, 9.3, 12.2]}, "松澤 恵太": {"target": [10.0, 10.0, 10.0, 10.6, 12.0, 7.9], "actual": [12.0, 9.0, 9.3, 11.1, 6.1, 8.4]}, "岡田 雄太": {"target": [8.7, 8.5, 10.0, 10.0, 10.0, 7.5], "actual": [3.6, 5.8, 6.8, 6.7, 9.3, 10.7]}, "久保田 やや子": {"target": [null, 4.2, 5.8, 9.4, 7.8, 8.9], "actual": [null, null, 4.2, 4.3, 6.2, 2.9]}, "野坂 汰門": {"target": [null, 4.2, 4.5, 6.0, 6.4, 8.1], "actual": [null, null, 1.2, 3.1, 3.8, 7.7]}, "番場 円香": {"target": [null, 2.5, 3.0, 4.9, 6.4, 5.6], "actual": [null, 4.3, 1.6, 2.4, 3.6, 8.6]}}}, "nurture": {"name": "ナーチャ保有数", "unit": "件", "kind": "stock", "months": ["4月", "5月", "6月", "7月"], "series": {"松澤 恵太": {"target": [null, null, null, null], "actual": [53, 64, 123, 78]}, "岡田 雄太": {"target": [null, null, null, null], "actual": [1, 0, 98, 49]}, "久保田 やや子": {"target": [null, null, null, null], "actual": [0, 0, 0, 0]}, "野坂 汰門": {"target": [null, null, null, null], "actual": [32, 40, 173, 84]}}}, "dial": {"name": "架電数", "unit": "件", "kind": "count", "months": ["1月", "2月", "3月", "4月", "5月", "6月"], "series": {"岡田 健吾": {"target": [null, null, null, null, null, null], "actual": [860, 677, 1287, 1070, 865, 489]}, "飛田 菜々花": {"target": [null, null, null, null, null, null], "actual": [720, 648, 859, 1109, 952, 587]}, "松澤 恵太": {"target": [null, null, null, null, null, null], "actual": [563, 568, 745, 643, 599, 422]}, "岡田 雄太": {"target": [null, null, null, null, null, null], "actual": [530, 580, 859, 708, 676, 442]}, "久保田 やや子": {"target": [null, null, null, null, null, null], "actual": [0, 0, 502, 1481, 1140, 599]}, "野坂 汰門": {"target": [null, null, null, null, null, null], "actual": [0, 0, 364, 720, 636, 465]}, "番場 円香": {"target": [null, null, null, null, null, null], "actual": [0, 161, 1202, 1025, 817, 618]}}}}}};
+const R = BUNDLE.result;
+const CHART = BUNDLE.chart;
+const ALL = "__all__";
+const PALETTE = ["#2563eb","#db2777","#65a30d","#d97706","#7c3aed","#0d9488",
+                 "#e11d48","#0891b2","#ca8a04","#475569"];
+
+let state = {member: ALL};
+
+function fmt(n, suf){ if(n===null||n===undefined||Number.isNaN(n)) return "—";
+  return (Math.round(n*10)/10).toLocaleString("ja-JP") + (suf||""); }
+function fmtInt(n, suf){ if(n===null||n===undefined) return "—";
+  return Math.round(n).toLocaleString("ja-JP") + (suf||""); }
+function achClass(a){ return a===null||a===undefined ? "" : (a>=100?"ok":(a>=70?"warn":"bad")); }
+function achColor(a){ return a>=100?"#16a34a":(a>=70?"#d97706":"#dc2626"); }
+function isShown(m){ return state.member===ALL || state.member===m; }
+
+// --- セレクト初期化 ---
+function initSelects(){
+  const mf = document.getElementById("memberFilter");
+  mf.innerHTML = '<option value="'+ALL+'">全員（IS合計）</option>';
+  BUNDLE.members.forEach(m=>{
+    const o=document.createElement("option"); o.value=m; o.textContent=m; mf.appendChild(o);
+  });
+  mf.addEventListener("change", e=>{ state.member=e.target.value; renderAll(); });
+
+  Object.keys(CHART.metrics).forEach(k=>{
+    const o=document.createElement("option"); o.value=k; o.textContent=CHART.metrics[k].name;
+    document.getElementById("trendMetric").appendChild(o);
+  });
+  document.getElementById("trendMetric").addEventListener("change", drawTrend);
+  document.getElementById("trendMode").addEventListener("change", drawTrend);
+}
+
+// --- サマリーカード ---
+function renderStats(){
+  const el = document.getElementById("statCards");
+  let cards = [`<div class="stat hot"><div class="k">締め日まで残り営業日</div>
+    <div class="v">${R.remaining_business_days}<small> 営業日</small></div>
+    <div class="note">締め日 ${R.deadline}（最終営業日 ${R.last_business_day} の7日前）まで。基準日〜締め日の平日数（土日・祝を除く）で算出。</div></div>`];
+  const order = ["call","valid_meeting","acquired_meeting"];
+  order.forEach(k=>{
+    const g = R.gap_metrics[k]; if(!g) return;
+    let target, actual, ach;
+    if(state.member===ALL){ target=g.team.target; actual=g.team.actual; ach=g.team.achievement; }
+    else{ const row=g.rows.find(r=>r.member===state.member);
+          if(!row){ return; } target=row.target; actual=row.actual; ach=row.achievement; }
+    const c = ach===null?"":achClass(ach);
+    cards.push(`<div class="stat"><div class="k">${g.name}</div>
+      <div class="v">${fmtInt(actual)}<small> / ${fmtInt(target)}</small></div>
+      <span class="pill ${c}">${fmt(ach,"%")}</span></div>`);
+  });
+  el.innerHTML = cards.join("");
+}
+
+// --- 必要架電数テーブル ---
+function renderNeed(){
+  const rows = R.call_need.filter(r=>isShown(r.member))
+    .sort((a,b)=>(b.need_dial||0)-(a.need_dial||0));
+  let body = rows.map(r=>{
+    const conn = r.connect_rate!=null ? `${fmt(r.connect_rate*100,"%")}<br><span class="u">${r.connect_src}</span>` : "—";
+    if(r.need_call===null) return `<tr>
+      <td class="m">${r.member}</td>
+      <td>${fmtInt(r.v_actual)} / ${fmtInt(r.v_target)}</td>
+      <td class="accent big">${fmtInt(r.remaining_v)}</td>
+      <td class="u">—</td>
+      <td>${conn}</td>
+      <td colspan="3" class="u">商談化率データなし</td></tr>`;
+    const capStyle = r.over_cap ? ' style="color:#fecaca"' : '';
+    return `<tr>
+      <td class="m">${r.member}${r.over_cap?'<span class="behind">上限超</span>':''}</td>
+      <td>${fmtInt(r.v_actual)} / ${fmtInt(r.v_target)}</td>
+      <td class="accent big">${fmtInt(r.remaining_v)}</td>
+      <td>${fmt(r.rate,"%")}<br><span class="u">${r.rate_src}</span></td>
+      <td>${conn}</td>
+      <td class="big">${fmtInt(r.need_call)}<span class="u">件</span></td>
+      <td class="big"${capStyle}>${fmtInt(r.need_dial)}<span class="u">件</span></td>
+      <td>着電${fmtInt(r.pace_call)} / 架電${fmtInt(r.pace_dial)}<span class="u">件/日</span></td>
+    </tr>`;
+  }).join("");
+  document.getElementById("needTable").innerHTML = `<table>
+    <thead><tr><th>メンバー</th><th>有効商談 実績/目標</th><th>残り有効商談</th>
+      <th>アポ獲得率</th><th>着電率</th><th>必要着電</th><th>必要架電</th><th>必要ペース/日</th></tr></thead>
+    <tbody>${body || '<tr><td colspan="8" class="u">該当データなし</td></tr>'}</tbody></table>`;
+}
+
+function renderNarrative(){
+  const key = state.member===ALL ? "__all__" : state.member;
+  const n = (R.narrative||{})[key];
+  const el = document.getElementById("narrative");
+  if(!n){ el.innerHTML='<span class="u">該当データなし</span>'; return; }
+  el.innerHTML = ["valid","acquired","need","action"]
+    .filter(k=>n[k]).map(k=>`<p class="nv">${n[k]}</p>`).join("");
+}
+
+// --- ギャップカード ---
+function renderGap(){
+  const wrap = document.getElementById("gapCards");
+  wrap.innerHTML = Object.keys(R.gap_metrics).map(k=>{
+    const g = R.gap_metrics[k];
+    let rows = g.rows.filter(r=>isShown(r.member))
+      .sort((a,b)=>b.gap-a.gap);
+    const showTeam = state.member===ALL;
+    const teamRow = showTeam ? `<tr class="team">
+      <td class="m">IS合計</td><td>${fmtInt(g.team.actual)}/${fmtInt(g.team.target)}</td>
+      <td class="accent big">${fmtInt(g.team.gap)}</td>
+      <td class="big">${fmt(g.team.pace)}<span class="u">/日</span></td>
+      <td><span class="pill ${achClass(g.team.achievement)}">${fmt(g.team.achievement,"%")}</span></td></tr>` : "";
+    const body = rows.map(r=>{
+      const bw = Math.min(r.achievement||0,100);
+      return `<tr>
+        <td class="m">${r.member}${r.behind?'<span class="behind">遅れ</span>':''}</td>
+        <td>${fmtInt(r.actual)}/${fmtInt(r.target)}
+          <div class="bar"><span style="width:${bw}%;background:${achColor(r.achievement||0)}"></span></div></td>
+        <td class="accent big">${fmtInt(r.gap)}</td>
+        <td class="big">${fmt(r.pace)}<span class="u">/日</span></td>
+        <td><span class="pill ${achClass(r.achievement)}">${fmt(r.achievement,"%")}</span></td>
+      </tr>`;
+    }).join("");
+    return `<div class="card"><h3>${g.name}
+        <span class="hint">残り必要数と1営業日あたりの必要ペース</span></h3>
+      <table><thead><tr><th>メンバー</th><th>実績/目標</th><th>残り必要</th>
+        <th>必要ペース</th><th>達成率</th></tr></thead>
+      <tbody>${teamRow}${body}</tbody></table></div>`;
+  }).join("");
+}
+
+// --- グラフ ---
+let trendChart;
+function targetMembers(metricKey){
+  const ser = CHART.metrics[metricKey].series;
+  return Object.keys(ser).filter(m=>isShown(m));
+}
+function drawTrend(){
+  const key=document.getElementById("trendMetric").value;
+  const mode=document.getElementById("trendMode").value;
+  const m=CHART.metrics[key];
+  const datasets=targetMembers(key).map((mem,i)=>{
+    const s=m.series[mem];
+    let vals = mode==="achievement"
+      ? s.actual.map((a,idx)=>{const t=s.target[idx]; return (t&&a!=null)?+(a/t*100).toFixed(1):null;})
+      : s.actual;
+    const col=PALETTE[BUNDLE.members.indexOf(mem)%PALETTE.length];
+    return {label:mem,data:vals,borderColor:col,backgroundColor:col,tension:.25,
+            spanGaps:true,borderWidth:2,pointRadius:3};
+  });
+  const cfg={type:"line",data:{labels:m.months,datasets},options:{responsive:true,
+    plugins:{legend:{labels:{boxWidth:12}},
+      title:{display:true,text:m.name+(mode==="achievement"?"（達成率%）":"（実績"+m.unit+"）")}},
+    scales:{y:{beginAtZero:true}}}};
+  if(trendChart) trendChart.destroy();
+  trendChart=new Chart(document.getElementById("trendChart"),cfg);
+}
+function renderAll(){ renderStats(); renderNeed(); renderGap(); renderNarrative(); drawTrend(); }
+
+document.getElementById("sub").textContent =
+  `対象月: ${R.year}年${R.month}月　／　基準日: ${R.as_of}`;
+document.getElementById("deadlineNote").textContent =
+  `締め日: ${R.deadline}（最終営業日 ${R.last_business_day} の1週間前）／ 対象営業日 ${R.total_business_days}日（経過 ${R.elapsed_business_days}・残り ${R.remaining_business_days}）`;
+document.getElementById("srcNote").textContent = BUNDLE.source;
+initSelects();
+renderAll();
+</script>
+</body>
+</html>
