@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLINICS導入研修：模範解答一覧</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #eef3f8;
+    --page: #f7fafc;
+    --ink: #16232f;
+    --muted: #5a7185;
+    --card: #ffffff;
+    --line: #dee6ee;
+    --accent: #0b5cab;
+    --accent-soft: #e3eef8;
+    --good: #1f7a45;
+    --good-soft: #e6f5eb;
+    --num-ink: #7c8ea1;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c141c;
+    --page: #101922;
+    --ink: #e4ecf4;
+    --muted: #8ea2b6;
+    --card: #16212c;
+    --line: #263442;
+    --accent: #5aa9f2;
+    --accent-soft: #17293b;
+    --good: #57c383;
+    --good-soft: #12301f;
+    --num-ink: #6d859c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c141c;
+      --page: #101922;
+      --ink: #e4ecf4;
+      --muted: #8ea2b6;
+      --card: #16212c;
+      --line: #263442;
+      --accent: #5aa9f2;
+      --accent-soft: #17293b;
+      --good: #57c383;
+      --good-soft: #12301f;
+      --num-ink: #6d859c;
+    }
+  }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .sheet { max-width: 780px; margin: 0 auto; padding: 32px 20px 90px; }
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 14px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .masthead h1 {
+    font-size: 1.5rem;
+    color: var(--accent);
+    text-wrap: balance;
+    letter-spacing: 0.01em;
+  }
+  .masthead .sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .masthead .tally {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .masthead .tally b { color: var(--ink); font-size: 1rem; }
+
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .toc a {
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+  }
+  .toc a:hover, .toc a:focus-visible { text-decoration: underline; }
+
+  .section-block { margin-bottom: 36px; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    border-left: 5px solid var(--accent);
+    padding: 4px 0 4px 12px;
+    margin-bottom: 4px;
+  }
+  .section-head h2 { font-size: 1.05rem; color: var(--accent); }
+  .section-head .range { font-size: 0.75rem; color: var(--num-ink); font-variant-numeric: tabular-nums; }
+  .section-desc { font-size: 0.82rem; color: var(--muted); margin: 4px 0 14px 17px; }
+
+  .qa-row {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 4px 14px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    break-inside: avoid;
+  }
+  .qa-num {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--num-ink);
+    font-variant-numeric: tabular-nums;
+    padding-top: 1px;
+  }
+  .qa-question {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .qa-answer {
+    grid-column: 2;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    background: var(--good-soft);
+    color: var(--good);
+    font-weight: bold;
+    font-size: 0.92rem;
+    border-radius: 6px;
+    padding: 3px 10px;
+    margin-bottom: 8px;
+    width: fit-content;
+  }
+  .qa-answer .tag { font-size: 0.68rem; font-weight: bold; letter-spacing: 0.04em; opacity: 0.85; }
+  .qa-exp {
+    grid-column: 2;
+    font-size: 0.86rem;
+    color: var(--ink);
+    opacity: 0.9;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--num-ink);
+    margin-top: 40px;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .toc { display: none; }
+    .qa-row { border-color: #ccc; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="masthead">
+    <div>
+      <h1>CLINICS導入研修：模範解答一覧</h1>
+      <div class="sub">「理解度確認テスト（完全版）」全40問の正解と解説のみをまとめたリファレンスです。</div>
+    </div>
+    <div class="tally"><b>40</b> 問収録</div>
+  </div>
+
+  <nav class="toc">
+    <a href="#sec1">第1部（問1〜10）</a>
+    <a href="#sec2">第2部（問11〜20）</a>
+    <a href="#sec3">第3部（問21〜30）</a>
+    <a href="#sec4">第4部（問31〜35）</a>
+    <a href="#sec5">第5部（問36〜40）</a>
+  </nav>
+
+  <section class="section-block" id="sec1">
+    <div class="section-head"><h2>第1部：医療ドメイン・基礎知識</h2><span class="range">問1〜10</span></div>
+    <p class="section-desc">医療機関の運営ルールや、業界用語の正しい理解を問います。</p>
+
+    <div class="qa-row"><div class="qa-num">01</div><div><div class="qa-question">日本の診療報酬制度において、医療費計算の基礎となる「1点」は何円と換算されるか？</div><div class="qa-answer"><span class="tag">正解 2</span>10円</div><div class="qa-exp">診療報酬点数は全国一律で「1点＝10円」と定められています。例えば初診料291点なら2,910円です。患者はこのうち自己負担割合（一般は3割）を窓口で支払います。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">02</div><div><div class="qa-question">カルテ記載の国際的標準「SOAP」のうち、患者が発した「熱が38度ある」という主観的な訴えを記録するのはどの項目か？</div><div class="qa-answer"><span class="tag">正解 1</span>S（Subjective）</div><div class="qa-exp">S（Subjective＝主観的情報）は患者本人の訴え・自覚症状を記録する項目です。O（Objective）は検査値や診察所見などの客観的情報、A（Assessment）は医師の評価・診断を記録します。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">03</div><div><div class="qa-question">「SOAP」のうち、医師による診断や評価、分析結果を記録するのはどの項目か？</div><div class="qa-answer"><span class="tag">正解 2</span>A（Assessment）</div><div class="qa-exp">A（Assessment＝評価）は、SとOの情報をもとに医師が行う診断・評価・分析を記録する項目です。P（Plan）は今後の治療方針や処方などの計画を記録します。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">04</div><div><div class="qa-question">厚生労働省が推進する「医療DX」において、紙の処方箋の代わりにデジタルデータで運用する仕組みを何と呼ぶか？</div><div class="qa-answer"><span class="tag">正解 2</span>電子処方箋</div><div class="qa-exp">電子処方箋は、処方箋を電子的に発行・運用する国の仕組みです。重複投薬のチェックなどにも役立ちます。オンライン資格確認は保険資格をオンラインで確認する別の仕組みです。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">05</div><div><div class="qa-question">マイナンバーカードを健康保険証として利用し、最新の保険情報を確認する仕組みを何と呼ぶか？</div><div class="qa-answer"><span class="tag">正解 1</span>オンライン資格確認</div><div class="qa-exp">オンライン資格確認は、マイナンバーカード（マイナ保険証）や保険証記号番号により、その場で最新の保険資格を確認できる仕組みです。資格過誤によるレセプト返戻の削減にもつながります。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">06</div><div><div class="qa-question">電子カルテとレセコン（レセプトコンピュータ）を別々に導入した場合に起こりやすい問題はどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>カルテの診療内容をレセコンに打ち直す「二度手間」が発生する。</div><div class="qa-exp">電子カルテとレセコンが分離していると、カルテに入力した診療内容を会計・請求のためにレセコンへ再入力する「二度手間」が発生し、入力ミスや業務負担の原因になります。レセコン一体型のCLINICSはこの課題を解消します。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">07</div><div><div class="qa-question">診療報酬の請求業務（レセプト業務）において、入力ミスや算定漏れがないかチェックする工程を何と呼ぶか？</div><div class="qa-answer"><span class="tag">正解 2</span>レセチェック</div><div class="qa-exp">レセプト提出前に入力ミス・算定漏れ・病名の不整合などを点検する工程を「レセチェック」と呼びます。ここでの精度が返戻・査定の削減、ひいてはキャッシュフローの安定に直結します。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">08</div><div><div class="qa-question">処方箋の有効期限は、原則として発行日を含めて何日間か？</div><div class="qa-answer"><span class="tag">正解 2</span>4日間</div><div class="qa-exp">処方箋の使用期間は、原則として交付日（発行日）を含めて4日間です（土日祝日も含む）。期限を過ぎると原則その処方箋では調剤を受けられません。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">09</div><div><div class="qa-question">日本の多くのクリニックで採用されている、医療費の窓口負担割合として最も一般的なものはどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>3割</div><div class="qa-exp">69歳以下の一般的な被保険者の自己負担割合は3割です。未就学児は2割、70〜74歳は原則2割（現役並み所得者は3割）、75歳以上は原則1割など、年齢・所得により異なります。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">10</div><div><div class="qa-question">クラウド型電子カルテのメリットとして正しいものはどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>インターネットがあれば、院外からもカルテの確認や入力が可能になる。</div><div class="qa-exp">クラウド型はデータがデータセンターに保管されるため、インターネット環境があれば場所を選ばずアクセスできます。院内サーバーの設置や手動バックアップが不要な点もオンプレミス型に対する大きな利点です。</div></div></div>
+  </section>
+
+  <section class="section-block" id="sec2">
+    <div class="section-head"><h2>第2部：CLINICS製品概要・主要機能</h2><span class="range">問11〜20</span></div>
+    <p class="section-desc">CLINICSが市場で高く評価されている理由と、独自の機能について問います。</p>
+
+    <div class="qa-row"><div class="qa-num">11</div><div><div class="qa-question">CLINICSが掲げる「All-in-one診療支援システム」とは、具体的にどのような状態を指すか？</div><div class="qa-answer"><span class="tag">正解 1</span>予約、問診、カルテ、会計、オンライン診療が1つのシステムで完結すること。</div><div class="qa-exp">CLINICSの「All-in-one」とは、予約・問診・カルテ・会計・オンライン診療といった診療に必要な機能が1つのシステムに統合されていることを指します。複数ベンダーのシステムを組み合わせる必要がなく、データ連携の手間も削減できます。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">12</div><div><div class="qa-question">CLINICSが「オンライン診療」の導入実績において、どのような評価を得ているか？</div><div class="qa-answer"><span class="tag">正解 2</span>国内導入実績No.1</div><div class="qa-exp">CLINICSはオンライン診療システムの「国内導入実績No.1」の評価を得ています。「シェアNo.1」ではなく「導入実績No.1」という表現である点に注意してください。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">13</div><div><div class="qa-question">CLINICS電子カルテは、ITトレンドの「電子カルテ部門」においてどのような実績があるか？</div><div class="qa-answer"><span class="tag">正解 1</span>2024年上半期ランキングNo.1</div><div class="qa-exp">CLINICS電子カルテは、比較サイト「ITトレンド」の電子カルテ部門で2024年上半期ランキングNo.1の実績があります。営業トークで実績を示す際は、年度・期間を正確に伝えることが重要です。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">14</div><div><div class="qa-question">2026年3月時点で、CLINICSを利用している医療機関の総数は約何件か？</div><div class="qa-answer"><span class="tag">正解 2</span>約3,500件</div><div class="qa-exp">2026年3月時点で、CLINICSの利用医療機関数は約3,500件です。商談で規模感を伝える際の重要な数字なので正確に覚えましょう。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">15</div><div><div class="qa-question">MEDLEY AI CLOUDによる「AIアシスト機能」のうち、診察時の会話からカルテ入力を補助する機能はどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>AI要約アシスト</div><div class="qa-exp">「AI要約アシスト」は、診察時の医師と患者の会話を自動で文字起こし・要約し、カルテ入力を補助する機能です。「AI文書アシスト」は紹介状などの文書作成を支援する別の機能です。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">16</div><div><div class="qa-question">「AI要約アシスト」により、医師はどのようなメリットを享受できるか？</div><div class="qa-answer"><span class="tag">正解 2</span>診察時の会話が自動で文字起こし・要約され、カルテ入力の負担が軽減される。</div><div class="qa-exp">AI要約アシストの価値は「カルテ入力の負担軽減」です。診察中の会話が自動で文字起こし・要約されるため、医師は入力作業に追われず患者との対話に集中できます。診断や病名の決定はあくまで医師が行います。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">17</div><div><div class="qa-question">CLINICSの「シームレスな操作性」を象徴する特徴はどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>予約から会計まで、複数のソフトを切り替えることなく「1画面」で完結すること。</div><div class="qa-exp">CLINICSは予約から会計までの業務を「1画面」で完結できる点が特徴です。ソフトの切り替えや画面の行き来が不要なため、受付〜診察〜会計の動線がスムーズになります。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">18</div><div><div class="qa-question">レセコン一体型のCLINICSにおいて、会計のミスを防ぐための機能はどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>適応症や投与量の自動チェック機能</div><div class="qa-exp">CLINICSには、処方薬の適応症や投与量を自動でチェックする機能があり、算定ミスや請求エラーを未然に防ぎます。レセコン一体型だからこそ、診療内容がそのまま会計・請求に反映され、チェックも一気通貫で行えます。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">19</div><div><div class="qa-question">CLINICSと連携可能な外部デバイスとして、手書き所見やシェーマ（図）をカルテに取り込めるものはどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>iPad / Apple Pencil</div><div class="qa-exp">CLINICSはiPad / Apple Pencilと連携し、手書きの所見やシェーマ（人体図などへの書き込み）をそのままカルテに取り込めます。紙カルテの自由な書き心地とデジタルの管理性を両立できる機能です。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">20</div><div><div class="qa-question">患者向けアプリとして展開されているものはどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>melmo（メルモ）</div><div class="qa-exp">melmo（メルモ）はメドレー社が提供する患者向けアプリで、予約・オンライン診療・アプリ決済などに利用されます。ジョブメドレーは医療介護従事者向けの求人サービスであり、患者向けアプリではありません。</div></div></div>
+  </section>
+
+  <section class="section-block" id="sec3">
+    <div class="section-head"><h2>第3部：経営分析・患者体験（収益向上）</h2><span class="range">問21〜30</span></div>
+    <p class="section-desc">収益の可視化や、患者満足度が経営に与える影響について問います。</p>
+
+    <div class="qa-row"><div class="qa-num">21</div><div><div class="qa-question">CLINICSの「経営分析ダッシュボード」で即座に可視化できる収益情報はどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>日毎の売上、診療単価、患者数などの推移。</div><div class="qa-exp">経営分析ダッシュボードでは、日毎の売上・診療単価・患者数などの推移をリアルタイムで可視化できます。これまで月次のレセプト集計まで見えなかった経営状況を、日々の意思決定に活かせるのが価値です。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">22</div><div><div class="qa-question">「診療圏マップ」機能を活用した、集患・マーケティングの例として正しいものはどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>通院患者のエリア分布を分析し、来院が少ない地域へ戦略的に広告を出す。</div><div class="qa-exp">診療圏マップは、通院患者の居住エリア分布を可視化する機能です。来院が少ない地域を特定してポスティングやWeb広告を打つなど、データに基づいた集患施策に活用できます。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">23</div><div><div class="qa-question">クリニック運営において、レセプトの「返戻」を減らすことが重要な経営上の理由は何か？</div><div class="qa-answer"><span class="tag">正解 1</span>入金の遅延を防ぎ、キャッシュフローを安定させるため。</div><div class="qa-exp">返戻とは、記載不備などによりレセプトが審査支払機関から差し戻されることです。返戻されると再提出まで入金が遅れる（通常より1か月以上先になる）ため、返戻を減らすことがキャッシュフローの安定に直結します。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">24</div><div><div class="qa-question">「アプリ決済（スマート会計）」を導入することで、クリニックの会計業務はどう変わるか？</div><div class="qa-answer"><span class="tag">正解 1</span>窓口での現金授受が不要になり、レジ締め作業や数え間違いのミスが劇的に減る。</div><div class="qa-exp">アプリ決済（スマート会計）を使うと、患者は窓口に並ばずアプリ上で支払いが完了します。クリニック側は現金授受・レジ締め・釣り銭ミスといった業務負担が大幅に減り、患者側も待ち時間が短縮されます。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">25</div><div><div class="qa-question">アプリ決済を利用した場合、クリニック側が支払う手数料率はいくらか？</div><div class="qa-answer"><span class="tag">正解 2</span>3.45%</div><div class="qa-exp">アプリ決済のクリニック側手数料率は3.45%です。導入提案時にコストの質問を受けることが多いため、正確な数字を覚えておきましょう。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">26</div><div><div class="qa-question">「Web問診（アプリ問診）」のデータをカルテに転記する際のCLINICSの利点はどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>問診内容をカルテ用語に変換し、ワンクリックで所見欄へ転記できる。</div><div class="qa-exp">CLINICSのWeb問診は、患者が入力した問診内容をカルテ用語に変換し、ワンクリックで所見欄へ転記できます。問診の転記作業が不要になり、診察前の準備時間とカルテ入力の負担を削減できます。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">27</div><div><div class="qa-question">複数クリニックを運営する医療法人の理事長が、CLINICSを活用するメリットはどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>法人管理機能により、各拠点の受付状況や経営指標をリアルタイムで横断的に把握できる。</div><div class="qa-exp">CLINICSの法人管理機能を使うと、複数拠点の受付状況や売上・患者数などの経営指標を横断的にリアルタイムで把握できます。クラウド型だからこそ、理事長が各院に足を運ばなくても全拠点の状況を一覧できます。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">28</div><div><div class="qa-question">オンライン診療を導入することで期待できる、収益面でのプラス効果はどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>通院が困難な患者の離脱を防ぎ、長期的な「かかりつけ」としての受診継続を支援できる。</div><div class="qa-exp">オンライン診療の収益面での価値は「患者の離脱防止」です。通院負担で治療を中断しがちな患者の受診継続を支え、長期的なかかりつけ関係を維持することで、安定した再診収益につながります。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">29</div><div><div class="qa-question">「Reserve with Google」連携（2025年秋以降順次）によって期待される効果はどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>Googleマップ上の情報から直接予約導線を作ることで、新規患者の獲得（流入）を強化できる。</div><div class="qa-exp">Reserve with Google連携により、Googleマップや検索結果のクリニック情報から直接予約ページへ誘導できます。「近くの内科」を検索した患者をそのまま予約に繋げられるため、新規患者の獲得強化が期待できます。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">30</div><div><div class="qa-question">CLINICSのIS（インサイドセールス）として、院長に最も刺さる「業務効率化」の提案はどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>「予約からレセプトまでを1画面に集約し、事務作業のムダと残業を削減しましょう」</div><div class="qa-exp">院長の関心は「診療に集中できる環境」と「スタッフの業務負担・残業の削減」です。予約からレセプトまでを1画面に集約するというCLINICSの強みを、事務作業のムダ・残業削減という経営メリットに翻訳して伝えるのが効果的です。</div></div></div>
+  </section>
+
+  <section class="section-block" id="sec4">
+    <div class="section-head"><h2>第4部：オンプレミスvsクラウド比較</h2><span class="range">問31〜35</span></div>
+    <p class="section-desc">「オンプレミス型」と「クラウド型」の違い、コスト、移行実務の理解を問います。</p>
+
+    <div class="qa-row"><div class="qa-num">31</div><div><div class="qa-question">オンプレミス型電子カルテと比較した、クラウド型電子カルテ（CLINICSなど）の「初期導入費用（イニシャルコスト）」に関する特徴として正しいものはどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>院内に高額なサーバー（サーバー本体、バックアップ装置、UPS等）を設置する必要がないため、初期費用を大幅に抑えられる。</div><div class="qa-exp">オンプレミス型は院内サーバー・バックアップ装置・UPS（無停電電源装置）などの機器購入で初期費用が数百万円規模になることがあります。クラウド型はこれらが不要なため、初期費用を大幅に抑えられるのが最大の特徴です。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">32</div><div><div class="qa-question">システムの保守や法改正（診療報酬改定など）に伴う「アップデート作業」において、クラウド型電子カルテのメリットはどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>インターネット経由でシステムが自動アップデートされるため、院内での更新作業や追加の更新費用が発生しない。</div><div class="qa-exp">クラウド型はシステムがインターネット経由で自動アップデートされるため、2年に1度の診療報酬改定などの際も、院内での更新作業や追加費用が発生しません。オンプレミス型では技術者の訪問作業や更新費用がかかるケースがあります。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">33</div><div><div class="qa-question">他社オンプレミスカルテからCLINICS（クラウド型）へ移行する際、一般的に「データ移行」ができる範囲として正しいものはどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>頭書き・病名・処方履歴などは移行できることが多いが、過去のカルテ2号紙（経過記録）は「PDF等の画像データ」として閲覧参照の形になることが一般的。</div><div class="qa-exp">データ移行の現実的な範囲を正確に伝えることが導入支援では重要です。頭書き・病名・処方履歴などの構造化データは移行できることが多い一方、過去の経過記録（カルテ2号紙）はメーカー間の仕様差により、PDF等の画像として「閲覧参照」する形になるのが一般的です。「全部完全に移行できます」と過剰に約束しないよう注意しましょう。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">34</div><div><div class="qa-question">クラウド型カルテにおいて、クリニックが「月額利用料（ランニングコスト）」を支払うことの経営上のメリットはどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>5〜6年ごとに発生する「サーバー機器の老朽化による買い替え費用（数百万円）」の手当てが不要になり、経営コストを平準化できる。</div><div class="qa-exp">オンプレミス型はサーバー機器の耐用年数（5〜6年）ごとに数百万円規模の買い替え費用が突発的に発生します。クラウド型の月額制はこの大型出費をなくし、毎月のコストを一定にできるため、経営計画が立てやすくなります。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">35</div><div><div class="qa-question">万が一、クリニック周辺地域で災害（地震や火災、浸水など）が発生した場合のデータ安全性の違いとして正しいものはどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>オンプレミス型は院内サーバー破損でデータ消失リスクがあるが、クラウド型は堅牢なデータセンターに保存されているため院内被災時もデータは無事。</div><div class="qa-exp">オンプレミス型は院内サーバーが物理的に破損するとカルテデータそのものを失うリスクがあります。クラウド型はデータが院外の堅牢なデータセンターに保存されているため、院内が被災してもデータは守られ、復旧後すぐに診療を再開できます。BCP（事業継続計画）の観点からもクラウド型の大きな強みです。</div></div></div>
+  </section>
+
+  <section class="section-block" id="sec5">
+    <div class="section-head"><h2>第5部：オンライン診療の法制度・診療報酬・活用事例</h2><span class="range">問36〜40</span></div>
+    <p class="section-desc">CLINICSの強みであるオンライン診療について、営業・導入支援の武器となる正確な知識を問います。</p>
+
+    <div class="qa-row"><div class="qa-num">36</div><div><div class="qa-question">オンライン診療の法制度（厚生労働省の指針）において、「初診」からオンライン診療を行う際、医師が遵守すべきルールとして正しいものはどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>本人確認を行い、診療情報が把握できない場合は処方期間が「最大7日間」に制限される（麻薬・向精神薬等は処方不可）。</div><div class="qa-exp">厚労省の「オンライン診療の適切な実施に関する指針」により、初診からのオンライン診療では本人確認が必要で、診療情報が把握できない患者への処方は最大7日間に制限されます。また、麻薬・向精神薬は初診では処方できません。安全性を担保するための重要なルールです。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">37</div><div><div class="qa-question">2024年度診療報酬改定において、オンライン診療で算定する「情報通信機器を用いた場合の診察料（初診料・再診料）」の点数の特徴はどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>対面診療よりも、オンライン診療の点数の方が低く設定されている。</div><div class="qa-exp">情報通信機器を用いた場合の診察料は、対面診療よりも低い点数に設定されています（例：初診料は対面291点に対し、情報通信機器を用いた場合253点）。クリニックへの提案時には、点数差を踏まえた収益シミュレーションが必要です。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">38</div><div><div class="qa-question">【診療科別事例：生活習慣病】内科や循環器内科において、オンライン診療を組み合わせることで最も効果を発揮するケースはどれか？</div><div class="qa-answer"><span class="tag">正解 2</span>症状が安定した高血圧・糖尿病患者に対し、対面とオンラインを交互に組み合わせ通院負担を減らし治療離脱を防ぐ。</div><div class="qa-exp">オンライン診療が最も効果を発揮するのは、症状が安定している生活習慣病（高血圧・糖尿病など）の定期通院です。対面とオンラインを交互に組み合わせることで、通院負担を減らしつつ治療の自己中断を防げます。急変時の治療や精密検査が必要なケースは対面診療の領域です。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">39</div><div><div class="qa-question">【診療科別事例：小児科・耳鼻咽喉科】子育て世代をターゲットとした、オンライン診療の有効な活用事例はどれか？</div><div class="qa-answer"><span class="tag">正解 3</span>経過観察やアレルギー性鼻炎・舌下免疫療法など定期処方のために、混雑する待合室で長時間待つストレスを解消する手段としての活用。</div><div class="qa-exp">小児科・耳鼻科でのオンライン診療は、経過観察や定期処方（アレルギー性鼻炎・舌下免疫療法など）に有効です。「子供を連れて混雑する待合室で長時間待つ」負担を解消でき、子育て世代への強い訴求ポイントになります。検査・手術・救急対応はオンラインではできません。</div></div></div>
+
+    <div class="qa-row"><div class="qa-num">40</div><div><div class="qa-question">オンライン診療を導入したクリニックが、診察料とは別に患者に請求できる「費用」について、国が認めている正しいルールはどれか？</div><div class="qa-answer"><span class="tag">正解 1</span>システム利用費や郵送代などは、事前説明と同意があれば「療養の給付と直接関係ない費用（選定療養・実費）」として別途請求してよい。</div><div class="qa-exp">システム利用費や薬・処方箋の郵送代は「療養の給付と直接関係ないサービス等の費用」として、事前の説明と患者の同意があれば診察料とは別に実費請求が認められています。クリニックがオンライン診療の運用コストを回収する仕組みとして、提案時に必ず押さえておきたいルールです。</div></div></div>
+  </section>
+
+  <footer>「CLINICS導入研修：理解度確認テスト（完全版）」に対応する模範解答一覧</footer>
+</div>
+</body>
+</html>

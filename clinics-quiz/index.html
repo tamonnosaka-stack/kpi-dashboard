@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLINICS導入研修：理解度確認テスト（完全版）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f0f4f8;
+    --ink: #1a2b3c;
+    --muted: #55708a;
+    --card-bg: #fff;
+    --card-border: #e1e9f1;
+    --accent: #0b5cab;
+    --accent-2: #1379d4;
+    --accent-soft: #e3eef8;
+    --option-border: #dbe5ee;
+    --option-hover-bg: #f2f8fd;
+    --option-hover-border: #8fbde6;
+    --good: #38a169;
+    --good-bg: #e8f7ee;
+    --bad: #e05252;
+    --bad-bg: #fdeaea;
+    --warn: #d9a90f;
+    --warn-bg: #fbf6e9;
+    --progress-track: #d7e3ee;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1720;
+    --ink: #e6edf5;
+    --muted: #93a7bc;
+    --card-bg: #17202b;
+    --card-border: #263140;
+    --accent: #4da3ff;
+    --accent-2: #2f8fe6;
+    --accent-soft: #16283b;
+    --option-border: #2a3646;
+    --option-hover-bg: #1b2b3d;
+    --option-hover-border: #3d5f82;
+    --good: #4cbf7d;
+    --good-bg: #123321;
+    --bad: #ef6a6a;
+    --bad-bg: #3a1717;
+    --warn: #e6bd4a;
+    --warn-bg: #332a10;
+    --progress-track: #223142;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1720;
+      --ink: #e6edf5;
+      --muted: #93a7bc;
+      --card-bg: #17202b;
+      --card-border: #263140;
+      --accent: #4da3ff;
+      --accent-2: #2f8fe6;
+      --accent-soft: #16283b;
+      --option-border: #2a3646;
+      --option-hover-bg: #1b2b3d;
+      --option-hover-border: #3d5f82;
+      --good: #4cbf7d;
+      --good-bg: #123321;
+      --bad: #ef6a6a;
+      --bad-bg: #3a1717;
+      --warn: #e6bd4a;
+      --warn-bg: #332a10;
+      --progress-track: #223142;
+    }
+  }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+  header {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    border-radius: 12px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+  }
+  header h1 { font-size: 1.4rem; margin-bottom: 6px; text-wrap: balance; }
+  header p { font-size: 0.9rem; opacity: 0.9; }
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    padding: 10px 0;
+    margin-bottom: 12px;
+  }
+  .progress-info { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; color: var(--muted); }
+  .progress-bar { height: 10px; background: var(--progress-track); border-radius: 5px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-2), var(--good)); transition: width 0.3s; }
+  .section-title {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: var(--accent);
+    border-left: 6px solid var(--accent);
+    padding: 6px 12px;
+    margin: 36px 0 6px;
+    background: var(--accent-soft);
+    border-radius: 0 8px 8px 0;
+  }
+  .section-desc { font-size: 0.85rem; color: var(--muted); margin: 0 0 16px 18px; }
+  .question-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 4px rgba(20, 50, 80, 0.08);
+    border: 1px solid var(--card-border);
+  }
+  .q-number { display: inline-block; background: var(--accent); color: #fff; font-size: 0.8rem; font-weight: bold; border-radius: 6px; padding: 2px 10px; margin-bottom: 8px; }
+  .q-text { font-weight: bold; margin-bottom: 14px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 2px solid var(--option-border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-size: 0.95rem;
+  }
+  .option:hover { background: var(--option-hover-bg); border-color: var(--option-hover-border); }
+  .option:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .option .num {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+  }
+  .answered .option { cursor: default; }
+  .answered .option:hover { background: inherit; }
+  .option.correct { background: var(--good-bg); border-color: var(--good); }
+  .option.correct .num { background: var(--good); color: #fff; }
+  .option.wrong { background: var(--bad-bg); border-color: var(--bad); }
+  .option.wrong .num { background: var(--bad); color: #fff; }
+  .option.dimmed { opacity: 0.55; }
+  .judge { font-weight: bold; margin-top: 6px; font-size: 1rem; }
+  .judge.ok { color: var(--good); }
+  .judge.ng { color: var(--bad); }
+  .explanation {
+    margin-top: 10px;
+    background: var(--warn-bg);
+    border-left: 4px solid var(--warn);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    display: none;
+  }
+  .explanation .exp-label { font-weight: bold; color: var(--warn); margin-bottom: 4px; display: block; }
+  .result-panel {
+    display: none;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 28px 24px;
+    margin-top: 36px;
+    box-shadow: 0 2px 10px rgba(20, 50, 80, 0.12);
+    border: 2px solid var(--accent);
+  }
+  .result-panel h2 { color: var(--accent); margin-bottom: 16px; font-size: 1.3rem; }
+  .score-big { font-size: 2.4rem; font-weight: bold; text-align: center; margin: 10px 0; font-variant-numeric: tabular-nums; }
+  .score-big small { font-size: 1.1rem; color: var(--muted); font-weight: normal; }
+  .score-msg { text-align: center; font-size: 1.05rem; font-weight: bold; margin-bottom: 20px; }
+  .score-bar-outer { height: 16px; background: var(--card-border); border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+  .score-bar-inner { height: 100%; width: 0%; border-radius: 8px; transition: width 0.8s ease; }
+  .table-scroll { overflow-x: auto; }
+  table.section-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.9rem; }
+  table.section-table th, table.section-table td { border: 1px solid var(--card-border); padding: 8px 10px; text-align: left; }
+  table.section-table th { background: var(--accent-soft); color: var(--accent); }
+  table.section-table td.num-cell { text-align: center; font-weight: bold; font-variant-numeric: tabular-nums; }
+  .wrong-list { font-size: 0.9rem; }
+  .wrong-list a { color: var(--bad); font-weight: bold; margin-right: 10px; text-decoration: none; }
+  .wrong-list a:hover { text-decoration: underline; }
+  .btn-area { text-align: center; margin-top: 20px; }
+  button.reset-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 12px 32px; font-size: 1rem; font-weight: bold; cursor: pointer;
+  }
+  button.reset-btn:hover { background: var(--accent-2); }
+  button.reset-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .perfect { color: var(--warn); }
+  @media (prefers-reduced-motion: reduce) {
+    .progress-fill, .score-bar-inner { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>CLINICS導入研修：理解度確認テスト（完全版）</h1>
+    <p>全40問・3択形式。選択肢をクリックすると即時に正誤と解説が表示されます。全問回答すると最後に結果が集計されます。</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span>回答状況：<b id="answeredCount">0</b> / 40 問</span>
+      <span>現在の正解数：<b id="correctCount">0</b></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="result-panel" id="resultPanel">
+    <h2>📊 採点結果</h2>
+    <div class="score-big"><span id="finalScore">0</span> <small>/ 40 問正解（<span id="finalPercent">0</span>%）</small></div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <div class="score-bar-outer"><div class="score-bar-inner" id="scoreBar"></div></div>
+    <div class="table-scroll">
+      <table class="section-table">
+        <thead><tr><th>セクション</th><th style="text-align:center">正解数</th><th style="text-align:center">正答率</th></tr></thead>
+        <tbody id="sectionTbody"></tbody>
+      </table>
+    </div>
+    <div class="wrong-list" id="wrongList"></div>
+    <div class="btn-area"><button class="reset-btn" onclick="resetQuiz()">もう一度挑戦する</button></div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+  { name: "第1部：医療ドメイン・基礎知識", desc: "医療機関の運営ルールや、業界用語の正しい理解を問います。", range: [1, 10] },
+  { name: "第2部：CLINICS製品概要・主要機能", desc: "CLINICSが市場で高く評価されている理由と、独自の機能について問います。", range: [11, 20] },
+  { name: "第3部：経営分析・患者体験（収益向上）", desc: "収益の可視化や、患者満足度が経営に与える影響について問います。", range: [21, 30] },
+  { name: "第4部：オンプレミスvsクラウド比較", desc: "「オンプレミス型」と「クラウド型」の違い、コスト、移行実務の理解を問います。", range: [31, 35] },
+  { name: "第5部：オンライン診療の法制度・診療報酬・活用事例", desc: "CLINICSの強みであるオンライン診療について、営業・導入支援の武器となる正確な知識を問います。", range: [36, 40] }
+];
+
+const QUESTIONS = [
+  {
+    q: "日本の診療報酬制度において、医療費計算の基礎となる「1点」は何円と換算されるか？",
+    opts: ["1円", "10円", "100円"],
+    ans: 2,
+    exp: "診療報酬点数は全国一律で「1点＝10円」と定められています。例えば初診料291点なら2,910円です。患者はこのうち自己負担割合（一般は3割）を窓口で支払います。"
+  },
+  {
+    q: "カルテ記載の国際的標準「SOAP」のうち、患者が発した「熱が38度ある」という主観的な訴えを記録するのはどの項目か？",
+    opts: ["S（Subjective）", "O（Objective）", "A（Assessment）"],
+    ans: 1,
+    exp: "S（Subjective＝主観的情報）は患者本人の訴え・自覚症状を記録する項目です。O（Objective）は検査値や診察所見などの客観的情報、A（Assessment）は医師の評価・診断を記録します。"
+  },
+  {
+    q: "「SOAP」のうち、医師による診断や評価、分析結果を記録するのはどの項目か？",
+    opts: ["O（Objective）", "A（Assessment）", "P（Plan）"],
+    ans: 2,
+    exp: "A（Assessment＝評価）は、SとOの情報をもとに医師が行う診断・評価・分析を記録する項目です。P（Plan）は今後の治療方針や処方などの計画を記録します。"
+  },
+  {
+    q: "厚生労働省が推進する「医療DX」において、紙の処方箋の代わりにデジタルデータで運用する仕組みを何と呼ぶか？",
+    opts: ["オンライン資格確認", "電子処方箋", "AI文書アシスト"],
+    ans: 2,
+    exp: "電子処方箋は、処方箋を電子的に発行・運用する国の仕組みです。重複投薬のチェックなどにも役立ちます。オンライン資格確認は保険資格をオンラインで確認する別の仕組みです。"
+  },
+  {
+    q: "マイナンバーカードを健康保険証として利用し、最新の保険情報を確認する仕組みを何と呼ぶか？",
+    opts: ["オンライン資格確認", "電子カルテ連携", "スマート会計"],
+    ans: 1,
+    exp: "オンライン資格確認は、マイナンバーカード（マイナ保険証）や保険証記号番号により、その場で最新の保険資格を確認できる仕組みです。資格過誤によるレセプト返戻の削減にもつながります。"
+  },
+  {
+    q: "電子カルテとレセコン（レセプトコンピュータ）を別々に導入した場合に起こりやすい問題はどれか？",
+    opts: ["システムの購入代金が安くなりすぎる。", "カルテの診療内容をレセコンに打ち直す「二度手間」が発生する。", "インターネットが繋がらなくなる。"],
+    ans: 2,
+    exp: "電子カルテとレセコンが分離していると、カルテに入力した診療内容を会計・請求のためにレセコンへ再入力する「二度手間」が発生し、入力ミスや業務負担の原因になります。レセコン一体型のCLINICSはこの課題を解消します。"
+  },
+  {
+    q: "診療報酬の請求業務（レセプト業務）において、入力ミスや算定漏れがないかチェックする工程を何と呼ぶか？",
+    opts: ["会計チェック", "レセチェック", "文書チェック"],
+    ans: 2,
+    exp: "レセプト提出前に入力ミス・算定漏れ・病名の不整合などを点検する工程を「レセチェック」と呼びます。ここでの精度が返戻・査定の削減、ひいてはキャッシュフローの安定に直結します。"
+  },
+  {
+    q: "処方箋の有効期限は、原則として発行日を含めて何日間か？",
+    opts: ["3日間", "4日間", "7日間"],
+    ans: 2,
+    exp: "処方箋の使用期間は、原則として交付日（発行日）を含めて4日間です（土日祝日も含む）。期限を過ぎると原則その処方箋では調剤を受けられません。"
+  },
+  {
+    q: "日本の多くのクリニックで採用されている、医療費の窓口負担割合として最も一般的なものはどれか？",
+    opts: ["1割", "3割", "10割"],
+    ans: 2,
+    exp: "69歳以下の一般的な被保険者の自己負担割合は3割です。未就学児は2割、70〜74歳は原則2割（現役並み所得者は3割）、75歳以上は原則1割など、年齢・所得により異なります。"
+  },
+  {
+    q: "クラウド型電子カルテのメリットとして正しいものはどれか？",
+    opts: ["院内に巨大なサーバーを設置する必要がある。", "インターネットがあれば、院外からもカルテの確認や入力が可能になる。", "データのバックアップを自分たちで毎日外付けHDDに取る必要がある。"],
+    ans: 2,
+    exp: "クラウド型はデータがデータセンターに保管されるため、インターネット環境があれば場所を選ばずアクセスできます。院内サーバーの設置や手動バックアップが不要な点もオンプレミス型に対する大きな利点です。"
+  },
+  {
+    q: "CLINICSが掲げる「All-in-one診療支援システム」とは、具体的にどのような状態を指すか？",
+    opts: ["予約、問診、カルテ、会計、オンライン診療が1つのシステムで完結すること。", "パソコン、プリンタ、iPadが全て無料でセットになっていること。", "医科だけでなく、歯科や薬局の機能も1つの画面で同時に使うこと。"],
+    ans: 1,
+    exp: "CLINICSの「All-in-one」とは、予約・問診・カルテ・会計・オンライン診療といった診療に必要な機能が1つのシステムに統合されていることを指します。複数ベンダーのシステムを組み合わせる必要がなく、データ連携の手間も削減できます。"
+  },
+  {
+    q: "CLINICSが「オンライン診療」の導入実績において、どのような評価を得ているか？",
+    opts: ["世界シェアNo.1", "国内導入実績No.1", "国内シェアNo.1"],
+    ans: 2,
+    exp: "CLINICSはオンライン診療システムの「国内導入実績No.1」の評価を得ています。「シェアNo.1」ではなく「導入実績No.1」という表現である点に注意してください。"
+  },
+  {
+    q: "CLINICS電子カルテは、ITトレンドの「電子カルテ部門」においてどのような実績があるか？",
+    opts: ["2024年上半期ランキングNo.1", "過去10年連続No.1", "2024年秋の期待度No.1"],
+    ans: 1,
+    exp: "CLINICS電子カルテは、比較サイト「ITトレンド」の電子カルテ部門で2024年上半期ランキングNo.1の実績があります。営業トークで実績を示す際は、年度・期間を正確に伝えることが重要です。"
+  },
+  {
+    q: "2026年3月時点で、CLINICSを利用している医療機関の総数は約何件か？",
+    opts: ["約1,000件", "約3,500件", "約10,000件"],
+    ans: 2,
+    exp: "2026年3月時点で、CLINICSの利用医療機関数は約3,500件です。商談で規模感を伝える際の重要な数字なので正確に覚えましょう。"
+  },
+  {
+    q: "MEDLEY AI CLOUDによる「AIアシスト機能」のうち、診察時の会話からカルテ入力を補助する機能はどれか？",
+    opts: ["AI文書アシスト", "AI要約アシスト", "AI診断アシスト"],
+    ans: 2,
+    exp: "「AI要約アシスト」は、診察時の医師と患者の会話を自動で文字起こし・要約し、カルテ入力を補助する機能です。「AI文書アシスト」は紹介状などの文書作成を支援する別の機能です。"
+  },
+  {
+    q: "「AI要約アシスト」により、医師はどのようなメリットを享受できるか？",
+    opts: ["患者の病名をAIが自動で決定してくれる。", "診察時の会話が自動で文字起こし・要約され、カルテ入力の負担が軽減される。", "医師の代わりにAIが患者に薬の説明をしてくれる。"],
+    ans: 2,
+    exp: "AI要約アシストの価値は「カルテ入力の負担軽減」です。診察中の会話が自動で文字起こし・要約されるため、医師は入力作業に追われず患者との対話に集中できます。診断や病名の決定はあくまで医師が行います。"
+  },
+  {
+    q: "CLINICSの「シームレスな操作性」を象徴する特徴はどれか？",
+    opts: ["画面を10枚以上同時に開いて並行作業ができること。", "予約から会計まで、複数のソフトを切り替えることなく「1画面」で完結すること。", "全ての操作がキーボードを使わずにマウスだけで完結すること。"],
+    ans: 2,
+    exp: "CLINICSは予約から会計までの業務を「1画面」で完結できる点が特徴です。ソフトの切り替えや画面の行き来が不要なため、受付〜診察〜会計の動線がスムーズになります。"
+  },
+  {
+    q: "レセコン一体型のCLINICSにおいて、会計のミスを防ぐための機能はどれか？",
+    opts: ["適応症や投与量の自動チェック機能", "患者の銀行残高確認機能", "自動翻訳機能"],
+    ans: 1,
+    exp: "CLINICSには、処方薬の適応症や投与量を自動でチェックする機能があり、算定ミスや請求エラーを未然に防ぎます。レセコン一体型だからこそ、診療内容がそのまま会計・請求に反映され、チェックも一気通貫で行えます。"
+  },
+  {
+    q: "CLINICSと連携可能な外部デバイスとして、手書き所見やシェーマ（図）をカルテに取り込めるものはどれか？",
+    opts: ["Androidスマートフォン", "iPad / Apple Pencil", "デジタルカメラ"],
+    ans: 2,
+    exp: "CLINICSはiPad / Apple Pencilと連携し、手書きの所見やシェーマ（人体図などへの書き込み）をそのままカルテに取り込めます。紙カルテの自由な書き心地とデジタルの管理性を両立できる機能です。"
+  },
+  {
+    q: "患者向けアプリとして展開されているものはどれか？",
+    opts: ["ジョブメドレー", "melmo（メルモ）", "MEDLEY AI"],
+    ans: 2,
+    exp: "melmo（メルモ）はメドレー社が提供する患者向けアプリで、予約・オンライン診療・アプリ決済などに利用されます。ジョブメドレーは医療介護従事者向けの求人サービスであり、患者向けアプリではありません。"
+  },
+  {
+    q: "CLINICSの「経営分析ダッシュボード」で即座に可視化できる収益情報はどれか？",
+    opts: ["日毎の売上、診療単価、患者数などの推移。", "全スタッフの正確な銀行残高。", "製薬会社からのリベート金額。"],
+    ans: 1,
+    exp: "経営分析ダッシュボードでは、日毎の売上・診療単価・患者数などの推移をリアルタイムで可視化できます。これまで月次のレセプト集計まで見えなかった経営状況を、日々の意思決定に活かせるのが価値です。"
+  },
+  {
+    q: "「診療圏マップ」機能を活用した、集患・マーケティングの例として正しいものはどれか？",
+    opts: ["通院患者のエリア分布を分析し、来院が少ない地域へ戦略的に広告を出す。", "競合クリニックの患者の住所を特定して訪問する。", "医師が往診に行く際の最短ルートをGoogleマップで表示するだけ。"],
+    ans: 1,
+    exp: "診療圏マップは、通院患者の居住エリア分布を可視化する機能です。来院が少ない地域を特定してポスティングやWeb広告を打つなど、データに基づいた集患施策に活用できます。"
+  },
+  {
+    q: "クリニック運営において、レセプトの「返戻」を減らすことが重要な経営上の理由は何か？",
+    opts: ["入金の遅延を防ぎ、キャッシュフローを安定させるため。", "スタッフが新しいPCを買えるようになるから。", "保健所からの表彰対象になるから。"],
+    ans: 1,
+    exp: "返戻とは、記載不備などによりレセプトが審査支払機関から差し戻されることです。返戻されると再提出まで入金が遅れる（通常より1か月以上先になる）ため、返戻を減らすことがキャッシュフローの安定に直結します。"
+  },
+  {
+    q: "「アプリ決済（スマート会計）」を導入することで、クリニックの会計業務はどう変わるか？",
+    opts: ["窓口での現金授受が不要になり、レジ締め作業や数え間違いのミスが劇的に減る。", "会計を忘れて帰った患者の家まで自動で集金に行く。", "全ての診察代金がメドレー社負担になる。"],
+    ans: 1,
+    exp: "アプリ決済（スマート会計）を使うと、患者は窓口に並ばずアプリ上で支払いが完了します。クリニック側は現金授受・レジ締め・釣り銭ミスといった業務負担が大幅に減り、患者側も待ち時間が短縮されます。"
+  },
+  {
+    q: "アプリ決済を利用した場合、クリニック側が支払う手数料率はいくらか？",
+    opts: ["0%", "3.45%", "10.0%"],
+    ans: 2,
+    exp: "アプリ決済のクリニック側手数料率は3.45%です。導入提案時にコストの質問を受けることが多いため、正確な数字を覚えておきましょう。"
+  },
+  {
+    q: "「Web問診（アプリ問診）」のデータをカルテに転記する際のCLINICSの利点はどれか？",
+    opts: ["問診内容をカルテ用語に変換し、ワンクリックで所見欄へ転記できる。", "患者が書いた文字をAIが読み上げてくれる。", "患者が嘘をついている場合にアラートが出る。"],
+    ans: 1,
+    exp: "CLINICSのWeb問診は、患者が入力した問診内容をカルテ用語に変換し、ワンクリックで所見欄へ転記できます。問診の転記作業が不要になり、診察前の準備時間とカルテ入力の負担を削減できます。"
+  },
+  {
+    q: "複数クリニックを運営する医療法人の理事長が、CLINICSを活用するメリットはどれか？",
+    opts: ["法人管理機能により、各拠点の受付状況や経営指標をリアルタイムで横断的に把握できる。", "全クリニックの看板の色を遠隔操作で変えられる。", "全クリニックのスタッフの昼食を注文できる。"],
+    ans: 1,
+    exp: "CLINICSの法人管理機能を使うと、複数拠点の受付状況や売上・患者数などの経営指標を横断的にリアルタイムで把握できます。クラウド型だからこそ、理事長が各院に足を運ばなくても全拠点の状況を一覧できます。"
+  },
+  {
+    q: "オンライン診療を導入することで期待できる、収益面でのプラス効果はどれか？",
+    opts: ["通院が困難な患者の離脱を防ぎ、長期的な「かかりつけ」としての受診継続を支援できる。", "オンラインだと診察料が3倍に設定できる。", "患者の代わりにAIが薬を製造できるようになる。"],
+    ans: 1,
+    exp: "オンライン診療の収益面での価値は「患者の離脱防止」です。通院負担で治療を中断しがちな患者の受診継続を支え、長期的なかかりつけ関係を維持することで、安定した再診収益につながります。"
+  },
+  {
+    q: "「Reserve with Google」連携（2025年秋以降順次）によって期待される効果はどれか？",
+    opts: ["Googleマップ上の情報から直接予約導線を作ることで、新規患者の獲得（流入）を強化できる。", "Googleから毎月広告費がもらえる。", "院長がGoogleの社員になれる。"],
+    ans: 1,
+    exp: "Reserve with Google連携により、Googleマップや検索結果のクリニック情報から直接予約ページへ誘導できます。「近くの内科」を検索した患者をそのまま予約に繋げられるため、新規患者の獲得強化が期待できます。"
+  },
+  {
+    q: "CLINICSのIS（インサイドセールス）として、院長に最も刺さる「業務効率化」の提案はどれか？",
+    opts: ["「予約からレセプトまでを1画面に集約し、事務作業のムダと残業を削減しましょう」", "「今使っているパソコンを全て最新のものに買い替えましょう」", "「スタッフを半分に減らして、院長が全部の操作をしましょう」"],
+    ans: 1,
+    exp: "院長の関心は「診療に集中できる環境」と「スタッフの業務負担・残業の削減」です。予約からレセプトまでを1画面に集約するというCLINICSの強みを、事務作業のムダ・残業削減という経営メリットに翻訳して伝えるのが効果的です。"
+  },
+  {
+    q: "オンプレミス型電子カルテと比較した、クラウド型電子カルテ（CLINICSなど）の「初期導入費用（イニシャルコスト）」に関する特徴として正しいものはどれか？",
+    opts: ["院内に高額なサーバー（サーバー本体、バックアップ装置、UPS等）を設置する必要がないため、初期費用を大幅に抑えられる。", "導入時に数千万円のシステムライセンス料を国に一括で支払う必要があるため、初期費用は高くなる。", "クラウド上に仮想サーバーを買い取る必要があるため、オンプレミス型と初期費用は全く変わらない。"],
+    ans: 1,
+    exp: "オンプレミス型は院内サーバー・バックアップ装置・UPS（無停電電源装置）などの機器購入で初期費用が数百万円規模になることがあります。クラウド型はこれらが不要なため、初期費用を大幅に抑えられるのが最大の特徴です。"
+  },
+  {
+    q: "システムの保守や法改正（診療報酬改定など）に伴う「アップデート作業」において、クラウド型電子カルテのメリットはどれか？",
+    opts: ["診療報酬改定のたびに、メーカーの技術者が来院して手動でDVDからデータを読み込ませる必要がある。", "インターネット経由でシステムが自動アップデートされるため、院内での更新作業や追加の更新費用が発生しない。", "法改正のアップデートはすべて院長がプログラミングを行って修正しなければならない。"],
+    ans: 2,
+    exp: "クラウド型はシステムがインターネット経由で自動アップデートされるため、2年に1度の診療報酬改定などの際も、院内での更新作業や追加費用が発生しません。オンプレミス型では技術者の訪問作業や更新費用がかかるケースがあります。"
+  },
+  {
+    q: "他社オンプレミスカルテからCLINICS（クラウド型）へ移行する際、一般的に「データ移行」ができる範囲として正しいものはどれか？",
+    opts: ["過去10年分の患者のすべてのカルテ記載、シェーマ（図）、過去のすべての画像データが100%完全に復元・編集可能な状態で移行できる。", "頭書き（患者氏名、生年月日、住所等）や病名、過去の処方履歴などは移行できることが多いが、メーカー間の仕様差により、過去のカルテ2号紙（経過記録）は「PDF等の画像データ」として閲覧参照の形になることが一般的である。", "オンプレミスとクラウドはデータの仕組みが完全に異なるため、名前すら一行も移行することはできず、すべて手入力で打ち直さなければならない。"],
+    ans: 2,
+    exp: "データ移行の現実的な範囲を正確に伝えることが導入支援では重要です。頭書き・病名・処方履歴などの構造化データは移行できることが多い一方、過去の経過記録（カルテ2号紙）はメーカー間の仕様差により、PDF等の画像として「閲覧参照」する形になるのが一般的です。「全部完全に移行できます」と過剰に約束しないよう注意しましょう。"
+  },
+  {
+    q: "クラウド型カルテにおいて、クリニックが「月額利用料（ランニングコスト）」を支払うことの経営上のメリットはどれか？",
+    opts: ["5〜6年ごとに発生する「サーバー機器の老朽化による買い替え費用（数百万円）」の手当てが不要になり、経営コストを平準化（予測可能に）できる。", "月額費用を支払うことで、クリニックの電気代や水道代もすべてメドレー社が負担してくれる。", "毎月支払う金額が、その月のクリニックの患者数に応じて10倍〜100倍にランダムに変倍する。"],
+    ans: 1,
+    exp: "オンプレミス型はサーバー機器の耐用年数（5〜6年）ごとに数百万円規模の買い替え費用が突発的に発生します。クラウド型の月額制はこの大型出費をなくし、毎月のコストを一定にできるため、経営計画が立てやすくなります。"
+  },
+  {
+    q: "万が一、クリニック周辺地域で災害（地震や火災、浸水など）が発生した場合のデータ安全性の違いとして正しいものはどれか？",
+    opts: ["オンプレミス型は院内のサーバーが破損するとデータが完全に消失するリスクがあるが、クラウド型は堅牢なデータセンターに保存されているため、院内が被災してもデータは無事である。", "オンプレミス型はデータが紙に印刷されて自動排出されるため安全だが、クラウド型はデータが蒸発して消えてしまう。", "どちらのタイプも、災害時には厚生労働省のサーバーからデータが自動的に全消去される仕組みになっている。"],
+    ans: 1,
+    exp: "オンプレミス型は院内サーバーが物理的に破損するとカルテデータそのものを失うリスクがあります。クラウド型はデータが院外の堅牢なデータセンターに保存されているため、院内が被災してもデータは守られ、復旧後すぐに診療を再開できます。BCP（事業継続計画）の観点からもクラウド型の大きな強みです。"
+  },
+  {
+    q: "オンライン診療の法制度（厚生労働省の指針）において、「初診」からオンライン診療を行う際、医師が遵守すべきルールとして正しいものはどれか？",
+    opts: ["事前に患者の顔写真付き身分証明書等で本人確認を行い、過去の診療情報（お薬手帳、健康診断結果、紹介状など）が把握できない場合は、処方できる薬の期間が「最大7日間」に制限される（麻薬や向精神薬等は処方不可）。", "初診の場合は、どのような患者であっても必ず30日間以上の長期処方をしなければならない。", "医師の判断であれば、初診から医療用麻薬や睡眠薬を制限なく自由に処方してよい。"],
+    ans: 1,
+    exp: "厚労省の「オンライン診療の適切な実施に関する指針」により、初診からのオンライン診療では本人確認が必要で、診療情報が把握できない患者への処方は最大7日間に制限されます。また、麻薬・向精神薬は初診では処方できません。安全性を担保するための重要なルールです。"
+  },
+  {
+    q: "2024年度診療報酬改定において、オンライン診療で算定する「情報通信機器を用いた場合の診察料（初診料・再診料）」の点数の特徴はどれか？",
+    opts: ["対面診療（対面での初診料・再診料）よりも、オンライン診療の点数の方が低く設定されている。", "対面診療よりも、オンライン診療の方が「一律で3倍」高く設定されている。", "オンライン診療では診察料を算定することが法律で禁止されているため、0点である。"],
+    ans: 1,
+    exp: "情報通信機器を用いた場合の診察料は、対面診療よりも低い点数に設定されています（例：初診料は対面291点に対し、情報通信機器を用いた場合253点）。クリニックへの提案時には、点数差を踏まえた収益シミュレーションが必要です。"
+  },
+  {
+    q: "【診療科別事例：生活習慣病】内科や循環器内科において、オンライン診療を組み合わせることで最も効果を発揮するケースはどれか？",
+    opts: ["容態が急変し、今すぐ救急車を呼ぶべき急性心不全の患者の治療。", "症状が安定しており、定期的な通院とお薬の継続が必要な「高血圧」や「糖尿病」の患者に対し、対面診療とオンライン診療を交互に組み合わせることで、通院負担を減らし治療離脱（自己中断）を防ぐ。", "初めて受診する、原因不明の激しい腹痛を訴える患者の精密検査。"],
+    ans: 2,
+    exp: "オンライン診療が最も効果を発揮するのは、症状が安定している生活習慣病（高血圧・糖尿病など）の定期通院です。対面とオンラインを交互に組み合わせることで、通院負担を減らしつつ治療の自己中断を防げます。急変時の治療や精密検査が必要なケースは対面診療の領域です。"
+  },
+  {
+    q: "【診療科別事例：小児科・耳鼻咽喉科】子育て世代（ワーキングマザー・ファザーなど）をターゲットとした、オンライン診療の有効な活用事例はどれか？",
+    opts: ["保育園や学校で流行している感染症（インフルエンザなど）の迅速検査や、耳の奥（鼓膜）の直接的な切開手術。", "夜間や休日に子供の容態が急変した際、100%確実に救急救命処置を自宅で行うためのシステム。", "経過観察（お薬をもらって数日後の様子見）や、アレルギー性鼻炎・舌下免疫療法など、定期的な薬の処方のために「子供を連れて混雑する待合室で長時間待つストレス」を解消する手段としての活用。"],
+    ans: 3,
+    exp: "小児科・耳鼻科でのオンライン診療は、経過観察や定期処方（アレルギー性鼻炎・舌下免疫療法など）に有効です。「子供を連れて混雑する待合室で長時間待つ」負担を解消でき、子育て世代への強い訴求ポイントになります。検査・手術・救急対応はオンラインではできません。"
+  },
+  {
+    q: "オンライン診療を導入したクリニックが、診察料とは別に患者に請求できる「費用」について、国が認めている正しいルールはどれか？",
+    opts: ["オンライン診療に伴うシステム利用費や、お薬・処方箋の郵送代などは、事前に患者に説明し同意を得ていれば「療養の給付と直接関係ない費用（選定療養・実費）」として診察料とは別に請求してよい。", "国が定める医療費以外の費用を患者から1円でも徴収した場合は、即座に医師免許が剥奪される。", "システム利用費として、患者から1回あたり一律1万円以上の手数料を強制的に徴収しなければならない。"],
+    ans: 1,
+    exp: "システム利用費や薬・処方箋の郵送代は「療養の給付と直接関係ないサービス等の費用」として、事前の説明と患者の同意があれば診察料とは別に実費請求が認められています。クリニックがオンライン診療の運用コストを回収する仕組みとして、提案時に必ず押さえておきたいルールです。"
+  }
+];
+
+let answers = new Array(QUESTIONS.length).fill(null);
+
+function buildQuiz() {
+  const quiz = document.getElementById("quiz");
+  quiz.innerHTML = "";
+  SECTIONS.forEach(sec => {
+    const st = document.createElement("div");
+    st.className = "section-title";
+    st.textContent = sec.name;
+    quiz.appendChild(st);
+    const sd = document.createElement("p");
+    sd.className = "section-desc";
+    sd.textContent = sec.desc;
+    quiz.appendChild(sd);
+    for (let n = sec.range[0]; n <= sec.range[1]; n++) {
+      quiz.appendChild(buildQuestion(n - 1));
+    }
+  });
+}
+
+function buildQuestion(idx) {
+  const q = QUESTIONS[idx];
+  const card = document.createElement("div");
+  card.className = "question-card";
+  card.id = "q" + (idx + 1);
+  let optsHtml = "";
+  q.opts.forEach((opt, i) => {
+    optsHtml += '<div class="option" data-q="' + idx + '" data-opt="' + (i + 1) + '" onclick="selectAnswer(this)" tabindex="0" role="button" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();selectAnswer(this);}">' +
+      '<span class="num">' + (i + 1) + '</span><span>' + opt + '</span></div>';
+  });
+  card.innerHTML =
+    '<span class="q-number">問' + (idx + 1) + '</span>' +
+    '<div class="q-text">' + q.q + '</div>' +
+    optsHtml +
+    '<div class="judge" id="judge' + idx + '"></div>' +
+    '<div class="explanation" id="exp' + idx + '"><span class="exp-label">💡 解説</span>' + q.exp + '</div>';
+  return card;
+}
+
+function selectAnswer(el) {
+  const idx = parseInt(el.dataset.q);
+  const chosen = parseInt(el.dataset.opt);
+  if (answers[idx] !== null) return;
+  answers[idx] = chosen;
+
+  const card = document.getElementById("q" + (idx + 1));
+  card.classList.add("answered");
+  const correct = QUESTIONS[idx].ans;
+  card.querySelectorAll(".option").forEach(opt => {
+    const o = parseInt(opt.dataset.opt);
+    if (o === correct) opt.classList.add("correct");
+    else if (o === chosen) opt.classList.add("wrong");
+    else opt.classList.add("dimmed");
+  });
+
+  const judge = document.getElementById("judge" + idx);
+  if (chosen === correct) {
+    judge.textContent = "⭕ 正解！";
+    judge.className = "judge ok";
+  } else {
+    judge.textContent = "❌ 不正解… 正解は「" + correct + ". " + QUESTIONS[idx].opts[correct - 1] + "」";
+    judge.className = "judge ng";
+  }
+  document.getElementById("exp" + idx).style.display = "block";
+
+  updateProgress();
+  if (answers.every(a => a !== null)) showResult();
+}
+
+function updateProgress() {
+  const answered = answers.filter(a => a !== null).length;
+  const correct = answers.filter((a, i) => a === QUESTIONS[i].ans).length;
+  document.getElementById("answeredCount").textContent = answered;
+  document.getElementById("correctCount").textContent = correct;
+  document.getElementById("progressFill").style.width = (answered / QUESTIONS.length * 100) + "%";
+}
+
+function showResult() {
+  const total = QUESTIONS.length;
+  const correct = answers.filter((a, i) => a === QUESTIONS[i].ans).length;
+  const percent = Math.round(correct / total * 100);
+
+  document.getElementById("finalScore").textContent = correct;
+  document.getElementById("finalPercent").textContent = percent;
+
+  const msg = document.getElementById("scoreMsg");
+  const scoreBig = document.querySelector(".score-big");
+  if (percent === 100) { msg.textContent = "🏆 全問正解！完璧です！"; scoreBig.classList.add("perfect"); }
+  else if (percent >= 90) { msg.textContent = "🎉 素晴らしい！合格レベルです。間違えた問題だけ復習しましょう。"; }
+  else if (percent >= 70) { msg.textContent = "👍 あと一歩！間違えた問題の解説をしっかり読み込みましょう。"; }
+  else { msg.textContent = "📖 もう一度資料を確認して、再挑戦しましょう。"; }
+
+  const bar = document.getElementById("scoreBar");
+  bar.style.background = percent >= 90 ? "var(--good)" : percent >= 70 ? "var(--warn)" : "var(--bad)";
+  setTimeout(() => { bar.style.width = percent + "%"; }, 100);
+
+  const tbody = document.getElementById("sectionTbody");
+  tbody.innerHTML = "";
+  SECTIONS.forEach(sec => {
+    let secCorrect = 0;
+    const count = sec.range[1] - sec.range[0] + 1;
+    for (let n = sec.range[0]; n <= sec.range[1]; n++) {
+      if (answers[n - 1] === QUESTIONS[n - 1].ans) secCorrect++;
+    }
+    const pct = Math.round(secCorrect / count * 100);
+    tbody.innerHTML += "<tr><td>" + sec.name + '</td><td class="num-cell">' + secCorrect + " / " + count + '</td><td class="num-cell">' + pct + "%</td></tr>";
+  });
+
+  const wrongs = [];
+  answers.forEach((a, i) => { if (a !== QUESTIONS[i].ans) wrongs.push(i + 1); });
+  const wrongList = document.getElementById("wrongList");
+  if (wrongs.length === 0) {
+    wrongList.innerHTML = "間違えた問題はありません。お見事です！";
+  } else {
+    wrongList.innerHTML = "<b>間違えた問題（クリックで移動）：</b><br>" +
+      wrongs.map(n => '<a href="#q' + n + '">問' + n + "</a>").join("");
+  }
+
+  const panel = document.getElementById("resultPanel");
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior: "smooth" });
+}
+
+function resetQuiz() {
+  answers = new Array(QUESTIONS.length).fill(null);
+  document.getElementById("resultPanel").style.display = "none";
+  document.getElementById("scoreBar").style.width = "0%";
+  document.querySelector(".score-big").classList.remove("perfect");
+  buildQuiz();
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
