@@ -20,10 +20,14 @@
     --option-hover-bg: #f2f8fd;
     --option-hover-border: #8fbde6;
     --good: #38a169;
+    --good-ink: #276749;
     --good-bg: #e8f7ee;
     --bad: #e05252;
+    --bad-ink: #c53030;
     --bad-bg: #fdeaea;
     --warn: #d9a90f;
+    /* --warn は罫線・アイコン用。本文に使うと白背景で 2.1:1 しかないため文字用を別に持つ */
+    --warn-ink: #8a6a00;
     --warn-bg: #fbf6e9;
     --progress-track: #d7e3ee;
   }
@@ -40,10 +44,13 @@
     --option-hover-bg: #1b2b3d;
     --option-hover-border: #3d5f82;
     --good: #4cbf7d;
+    --good-ink: #4cbf7d;
     --good-bg: #123321;
     --bad: #ef6a6a;
+    --bad-ink: #ef6a6a;
     --bad-bg: #3a1717;
     --warn: #e6bd4a;
+    --warn-ink: #e6bd4a;
     --warn-bg: #332a10;
     --progress-track: #223142;
   }
@@ -61,10 +68,13 @@
       --option-hover-bg: #1b2b3d;
       --option-hover-border: #3d5f82;
       --good: #4cbf7d;
+      --good-ink: #4cbf7d;
       --good-bg: #123321;
       --bad: #ef6a6a;
+      --bad-ink: #ef6a6a;
       --bad-bg: #3a1717;
       --warn: #e6bd4a;
+      --warn-ink: #e6bd4a;
       --warn-bg: #332a10;
       --progress-track: #223142;
     }
@@ -109,7 +119,7 @@
   .bottom-actions { text-align: center; margin-top: 28px; }
   .bottom-note { font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; }
   .bottom-note a { color: var(--accent); font-weight: bold; }
-  .unanswered-note { font-size: 0.9rem; color: var(--warn); font-weight: bold; text-align: center; margin-bottom: 16px; }
+  .unanswered-note { font-size: 0.9rem; color: var(--warn-ink); font-weight: bold; text-align: center; margin-bottom: 16px; }
   .section-title {
     font-size: 1.15rem;
     font-weight: bold;
@@ -172,9 +182,9 @@
   .option.wrong .num { background: var(--bad); color: #fff; }
   .option.dimmed { opacity: 0.55; }
   .judge { font-weight: bold; margin-top: 6px; font-size: 1rem; }
-  .judge.ok { color: var(--good); }
-  .judge.ng { color: var(--bad); }
-  .judge.na { color: var(--warn); }
+  .judge.ok { color: var(--good-ink); }
+  .judge.ng { color: var(--bad-ink); }
+  .judge.na { color: var(--warn-ink); }
   .explanation {
     margin-top: 10px;
     background: var(--warn-bg);
@@ -184,7 +194,7 @@
     font-size: 0.9rem;
     display: none;
   }
-  .explanation .exp-label { font-weight: bold; color: var(--warn); margin-bottom: 4px; display: block; }
+  .explanation .exp-label { font-weight: bold; color: var(--warn-ink); margin-bottom: 4px; display: block; }
   .result-panel {
     display: none;
     background: var(--card-bg);
