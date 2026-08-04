@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
 <title>CLINICS導入研修：理解度確認テスト（完全版）</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -92,9 +93,23 @@
     padding: 10px 0;
     margin-bottom: 12px;
   }
-  .progress-info { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; color: var(--muted); }
+  .progress-row { display: flex; align-items: center; gap: 14px; }
+  .progress-main { flex: 1; min-width: 0; }
+  .progress-info { display: flex; justify-content: space-between; gap: 12px; font-size: 0.85rem; margin-bottom: 4px; color: var(--muted); }
   .progress-bar { height: 10px; background: var(--progress-track); border-radius: 5px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-2), var(--good)); transition: width 0.3s; }
+  .grade-btn {
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    padding: 10px 22px; font-size: 0.95rem; font-weight: bold; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .grade-btn:hover { background: var(--accent-2); }
+  .grade-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .grade-btn.lg { padding: 14px 40px; font-size: 1.05rem; }
+  .bottom-actions { text-align: center; margin-top: 28px; }
+  .bottom-note { font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; }
+  .bottom-note a { color: var(--accent); font-weight: bold; }
+  .unanswered-note { font-size: 0.9rem; color: var(--warn); font-weight: bold; text-align: center; margin-bottom: 16px; }
   .section-title {
     font-size: 1.15rem;
     font-weight: bold;
@@ -109,6 +124,8 @@
   .question-card {
     background: var(--card-bg);
     border-radius: 10px;
+    /* sticky ヘッダーがアンカー先の「問N」を覆わないための余白 */
+    scroll-margin-top: 84px;
     padding: 20px;
     margin-bottom: 18px;
     box-shadow: 0 1px 4px rgba(20, 50, 80, 0.08);
@@ -119,7 +136,8 @@
   .option {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 2px 10px;
     padding: 10px 14px;
     border: 2px solid var(--option-border);
     border-radius: 8px;
@@ -128,7 +146,8 @@
     transition: background 0.15s, border-color 0.15s;
     font-size: 0.95rem;
   }
-  .option:hover { background: var(--option-hover-bg); border-color: var(--option-hover-border); }
+  #quiz:not(.graded) .option:hover { background: var(--option-hover-bg); border-color: var(--option-hover-border); }
+  #quiz:not(.graded) .option.selected:hover { background: var(--accent-soft); border-color: var(--accent); }
   .option:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .option .num {
     flex-shrink: 0;
@@ -140,8 +159,13 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 0.85rem;
   }
-  .answered .option { cursor: default; }
-  .answered .option:hover { background: inherit; }
+  .option.selected { background: var(--accent-soft); border-color: var(--accent); }
+  .option.selected .num { background: var(--accent); color: #fff; }
+  #quiz.graded .option { cursor: default; }
+  /* flex-basis:0 にしないと、長い本文が番号の右に収まらず次の行へ落ちる */
+  .option .opt-text { flex: 1 1 0; min-width: 0; }
+  /* 幅を食って選択肢本文を潰さないよう、常に独立した行に置く */
+  .your-mark { flex-basis: 100%; text-align: right; font-size: 0.75rem; font-weight: bold; color: var(--muted); }
   .option.correct { background: var(--good-bg); border-color: var(--good); }
   .option.correct .num { background: var(--good); color: #fff; }
   .option.wrong { background: var(--bad-bg); border-color: var(--bad); }
@@ -150,6 +174,7 @@
   .judge { font-weight: bold; margin-top: 6px; font-size: 1rem; }
   .judge.ok { color: var(--good); }
   .judge.ng { color: var(--bad); }
+  .judge.na { color: var(--warn); }
   .explanation {
     margin-top: 10px;
     background: var(--warn-bg);
@@ -169,7 +194,10 @@
     box-shadow: 0 2px 10px rgba(20, 50, 80, 0.12);
     border: 2px solid var(--accent);
   }
-  .result-panel h2 { color: var(--accent); margin-bottom: 16px; font-size: 1.3rem; }
+  .result-panel { scroll-margin-top: 84px; }
+  /* inline-block にしないと、採点直後のフォーカスリングがパネル幅いっぱいの枠に見える */
+  .result-panel h2 { display: inline-block; color: var(--accent); margin-bottom: 16px; font-size: 1.3rem; scroll-margin-top: 84px; }
+  .result-panel h2:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
   .score-big { font-size: 2.4rem; font-weight: bold; text-align: center; margin: 10px 0; font-variant-numeric: tabular-nums; }
   .score-big small { font-size: 1.1rem; color: var(--muted); font-weight: normal; }
   .score-msg { text-align: center; font-size: 1.05rem; font-weight: bold; margin-bottom: 20px; }
@@ -191,6 +219,17 @@
   button.reset-btn:hover { background: var(--accent-2); }
   button.reset-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .perfect { color: var(--warn); }
+  /* 採点後の進捗バーは「全問回答済み＝100%」を示すため、正解数の隣では満点に見えてしまう */
+  .progress-wrap.graded .progress-bar { display: none; }
+  @media (max-width: 480px) {
+    .progress-info { font-size: 0.75rem; }
+    .progress-info span { white-space: nowrap; }
+    .progress-row { gap: 10px; }
+    .grade-btn { padding: 9px 14px; font-size: 0.88rem; }
+    .question-card { padding: 16px 14px; }
+    header { padding: 20px 18px; }
+    header h1 { font-size: 1.2rem; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .progress-fill, .score-bar-inner { transition: none; }
   }
@@ -200,23 +239,34 @@
 <div class="container">
   <header>
     <h1>CLINICS導入研修：理解度確認テスト（完全版）</h1>
-    <p>全40問・3択形式。選択肢をクリックすると即時に正誤と解説が表示されます。全問回答すると最後に結果が集計されます。</p>
+    <p>全40問・3択形式。回答は何度でも選び直せます。すべて選び終えたら「採点する」を押すと、正誤と解説がまとめて表示されます。</p>
   </header>
 
   <div class="progress-wrap">
-    <div class="progress-info">
-      <span>回答状況：<b id="answeredCount">0</b> / 40 問</span>
-      <span>現在の正解数：<b id="correctCount">0</b></span>
+    <div class="progress-row">
+      <div class="progress-main">
+        <div class="progress-info">
+          <span>回答 <b id="answeredCount">0</b> / 40 問</span>
+          <span id="statusNote" aria-live="polite"></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <button type="button" class="grade-btn" id="gradeBtn" onclick="gradeQuiz()">採点する</button>
     </div>
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
   <div id="quiz"></div>
 
+  <div class="bottom-actions" id="bottomActions">
+    <p class="bottom-note" id="bottomNote"></p>
+    <button type="button" class="grade-btn lg" onclick="gradeQuiz()">採点する</button>
+  </div>
+
   <div class="result-panel" id="resultPanel">
-    <h2>📊 採点結果</h2>
+    <h2 id="resultHeading" tabindex="-1">📊 採点結果</h2>
     <div class="score-big"><span id="finalScore">0</span> <small>/ 40 問正解（<span id="finalPercent">0</span>%）</small></div>
     <div class="score-msg" id="scoreMsg"></div>
+    <div class="unanswered-note" id="unansweredNote"></div>
     <div class="score-bar-outer"><div class="score-bar-inner" id="scoreBar"></div></div>
     <div class="table-scroll">
       <table class="section-table">
@@ -482,6 +532,12 @@ const QUESTIONS = [
 ];
 
 let answers = new Array(QUESTIONS.length).fill(null);
+let graded = false;
+
+function scrollBehavior() {
+  const mm = window.matchMedia;
+  return mm && mm("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+}
 
 function buildQuiz() {
   const quiz = document.getElementById("quiz");
@@ -508,60 +564,165 @@ function buildQuestion(idx) {
   card.id = "q" + (idx + 1);
   let optsHtml = "";
   q.opts.forEach((opt, i) => {
-    optsHtml += '<div class="option" data-q="' + idx + '" data-opt="' + (i + 1) + '" onclick="selectAnswer(this)" tabindex="0" role="button" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();selectAnswer(this);}">' +
-      '<span class="num">' + (i + 1) + '</span><span>' + opt + '</span></div>';
+    optsHtml += '<div class="option" data-q="' + idx + '" data-opt="' + (i + 1) + '" onclick="selectAnswer(this, true)" tabindex="' + (i === 0 ? "0" : "-1") + '" role="radio" aria-checked="false" onkeydown="optionKeydown(event, this)">' +
+      '<span class="num">' + (i + 1) + '</span><span class="opt-text">' + opt + '</span></div>';
   });
   card.innerHTML =
     '<span class="q-number">問' + (idx + 1) + '</span>' +
-    '<div class="q-text">' + q.q + '</div>' +
-    optsHtml +
+    '<div class="q-text" id="qtext' + idx + '">' + q.q + '</div>' +
+    '<div role="radiogroup" aria-labelledby="qtext' + idx + '">' + optsHtml + '</div>' +
     '<div class="judge" id="judge' + idx + '"></div>' +
-    '<div class="explanation" id="exp' + idx + '"><span class="exp-label">💡 解説</span>' + q.exp + '</div>';
+    '<div class="explanation" hidden id="exp' + idx + '"><span class="exp-label">💡 解説</span>' + q.exp + '</div>';
   return card;
 }
 
-function selectAnswer(el) {
+// allowToggle はマウス操作のみ true。キーボードで選択解除できてしまうと
+// radio の作法（Space は冪等）に反し、意図しない未回答を生むため。
+function selectAnswer(el, allowToggle) {
+  if (graded) return;
   const idx = parseInt(el.dataset.q);
   const chosen = parseInt(el.dataset.opt);
-  if (answers[idx] !== null) return;
-  answers[idx] = chosen;
+  answers[idx] = allowToggle && answers[idx] === chosen ? null : chosen;
 
+  const list = document.getElementById("q" + (idx + 1)).querySelectorAll(".option");
+  list.forEach(opt => {
+    const on = parseInt(opt.dataset.opt) === answers[idx];
+    opt.classList.toggle("selected", on);
+    opt.setAttribute("aria-checked", on ? "true" : "false");
+  });
+  // radiogroup は選択中の1つだけをタブ順に残す（全40問で120→40タブストップ）
+  const focusIdx = answers[idx] === null ? 0 : answers[idx] - 1;
+  list.forEach((opt, i) => opt.setAttribute("tabindex", i === focusIdx ? "0" : "-1"));
+  updateProgress();
+}
+
+function optionKeydown(event, el) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    selectAnswer(el, false);
+    return;
+  }
+  const STEP = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 };
+  if (!(event.key in STEP) && event.key !== "Home" && event.key !== "End") return;
+  if (graded) return;
+  event.preventDefault();
+  const list = [...el.parentNode.querySelectorAll(".option")];
+  const cur = list.indexOf(el);
+  let next;
+  if (event.key === "Home") next = 0;
+  else if (event.key === "End") next = list.length - 1;
+  else next = (cur + STEP[event.key] + list.length) % list.length;
+  selectAnswer(list[next], false);
+  list[next].focus();
+}
+
+function countCorrect() {
+  return answers.filter((a, i) => a === QUESTIONS[i].ans).length;
+}
+
+function countUnanswered() {
+  return answers.filter(a => a === null).length;
+}
+
+function updateProgress() {
+  const answered = QUESTIONS.length - countUnanswered();
+  document.getElementById("answeredCount").textContent = answered;
+  document.getElementById("progressFill").style.width = (answered / QUESTIONS.length * 100) + "%";
+
+  const statusNote = document.getElementById("statusNote");
+  const bottomNote = document.getElementById("bottomNote");
+  if (graded) {
+    statusNote.innerHTML = "正解数：<b>" + countCorrect() + "</b> / " + QUESTIONS.length + " 問";
+    bottomNote.textContent = "";
+    return;
+  }
+  const remaining = QUESTIONS.length - answered;
+  // 同じ文字列を入れ直すと aria-live が同一内容を再読み上げし、
+  // bottomNote は innerHTML 再生成でリンクのフォーカスが飛ぶため、変化時のみ書き換える
+  const status = remaining === 0 ? "すべて回答済み" : "未回答 " + remaining + " 問";
+  if (statusNote.textContent !== status) statusNote.textContent = status;
+  const note = remaining === 0
+    ? "すべて回答済みです。「採点する」で正誤と解説を表示します。"
+    : "未回答が " + remaining + " 問あります。" +
+      '<a href="#" onclick="jumpToUnanswered();return false;">最初の未回答へ移動</a>';
+  if (bottomNote.innerHTML !== note) bottomNote.innerHTML = note;
+}
+
+function jumpToUnanswered() {
+  const idx = answers.findIndex(a => a === null);
+  if (idx === -1) return;
   const card = document.getElementById("q" + (idx + 1));
-  card.classList.add("answered");
+  card.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
+  card.querySelector(".option").focus({ preventScroll: true });
+}
+
+function gradeQuiz() {
+  if (graded) return;
+  const unanswered = countUnanswered();
+  if (unanswered > 0) {
+    const proceed = confirm("未回答が " + unanswered + " 問あります。\n未回答は不正解として採点されます。このまま採点しますか？");
+    if (!proceed) { jumpToUnanswered(); return; }
+  }
+  graded = true;
+  document.getElementById("quiz").classList.add("graded");
+  document.querySelector(".progress-wrap").classList.add("graded");
+  document.getElementById("bottomActions").hidden = true;
+  // 誤答リンクで上へ飛んだあと結果へ戻れるよう、採点ボタンの枠を再利用する
+  const btn = document.getElementById("gradeBtn");
+  btn.textContent = "結果へ";
+  btn.onclick = scrollToResult;
+  QUESTIONS.forEach((_, i) => revealQuestion(i));
+  updateProgress();
+  showResult();
+}
+
+function scrollToResult() {
+  document.getElementById("resultPanel").scrollIntoView({ behavior: scrollBehavior() });
+  document.getElementById("resultHeading").focus({ preventScroll: true });
+}
+
+function revealQuestion(idx) {
+  const card = document.getElementById("q" + (idx + 1));
   const correct = QUESTIONS[idx].ans;
+  const chosen = answers[idx];
   card.querySelectorAll(".option").forEach(opt => {
     const o = parseInt(opt.dataset.opt);
     if (o === correct) opt.classList.add("correct");
     else if (o === chosen) opt.classList.add("wrong");
     else opt.classList.add("dimmed");
+    opt.setAttribute("tabindex", "-1");
+    opt.setAttribute("aria-disabled", "true");
+    if (o === chosen) {
+      const mark = document.createElement("span");
+      mark.className = "your-mark";
+      mark.textContent = "あなたの回答";
+      opt.appendChild(mark);
+    }
   });
 
   const judge = document.getElementById("judge" + idx);
-  if (chosen === correct) {
+  const answerText = "正解は「" + correct + ". " + QUESTIONS[idx].opts[correct - 1] + "」";
+  if (chosen === null) {
+    judge.textContent = "⚠️ 未回答… " + answerText;
+    judge.className = "judge na";
+  } else if (chosen === correct) {
     judge.textContent = "⭕ 正解！";
     judge.className = "judge ok";
   } else {
-    judge.textContent = "❌ 不正解… 正解は「" + correct + ". " + QUESTIONS[idx].opts[correct - 1] + "」";
+    judge.textContent = "❌ 不正解… " + answerText;
     judge.className = "judge ng";
   }
-  document.getElementById("exp" + idx).style.display = "block";
-
-  updateProgress();
-  if (answers.every(a => a !== null)) showResult();
-}
-
-function updateProgress() {
-  const answered = answers.filter(a => a !== null).length;
-  const correct = answers.filter((a, i) => a === QUESTIONS[i].ans).length;
-  document.getElementById("answeredCount").textContent = answered;
-  document.getElementById("correctCount").textContent = correct;
-  document.getElementById("progressFill").style.width = (answered / QUESTIONS.length * 100) + "%";
+  // hidden 属性で隠しているのはリーダーモード等の抽出系に解説が拾われないようにするため
+  const exp = document.getElementById("exp" + idx);
+  exp.removeAttribute("hidden");
+  exp.style.display = "block";
 }
 
 function showResult() {
   const total = QUESTIONS.length;
-  const correct = answers.filter((a, i) => a === QUESTIONS[i].ans).length;
+  const correct = countCorrect();
   const percent = Math.round(correct / total * 100);
+  const unanswered = countUnanswered();
 
   document.getElementById("finalScore").textContent = correct;
   document.getElementById("finalPercent").textContent = percent;
@@ -572,6 +733,9 @@ function showResult() {
   else if (percent >= 90) { msg.textContent = "🎉 素晴らしい！合格レベルです。間違えた問題だけ復習しましょう。"; }
   else if (percent >= 70) { msg.textContent = "👍 あと一歩！間違えた問題の解説をしっかり読み込みましょう。"; }
   else { msg.textContent = "📖 もう一度資料を確認して、再挑戦しましょう。"; }
+
+  document.getElementById("unansweredNote").textContent =
+    unanswered > 0 ? "※ 未回答 " + unanswered + " 問は不正解として集計しています。" : "";
 
   const bar = document.getElementById("scoreBar");
   bar.style.background = percent >= 90 ? "var(--good)" : percent >= 70 ? "var(--warn)" : "var(--bad)";
@@ -595,26 +759,34 @@ function showResult() {
   if (wrongs.length === 0) {
     wrongList.innerHTML = "間違えた問題はありません。お見事です！";
   } else {
-    wrongList.innerHTML = "<b>間違えた問題（クリックで移動）：</b><br>" +
+    wrongList.innerHTML = "<b>間違えた・未回答の問題（クリックで移動）：</b><br>" +
       wrongs.map(n => '<a href="#q' + n + '">問' + n + "</a>").join("");
   }
 
-  const panel = document.getElementById("resultPanel");
-  panel.style.display = "block";
-  panel.scrollIntoView({ behavior: "smooth" });
+  document.getElementById("resultPanel").style.display = "block";
+  // 下部の採点ボタンを hidden にするとフォーカスが body に落ちるため、見出しへ移す
+  scrollToResult();
 }
 
 function resetQuiz() {
   answers = new Array(QUESTIONS.length).fill(null);
+  graded = false;
+  document.getElementById("quiz").classList.remove("graded");
+  document.querySelector(".progress-wrap").classList.remove("graded");
+  document.getElementById("bottomActions").hidden = false;
+  const btn = document.getElementById("gradeBtn");
+  btn.textContent = "採点する";
+  btn.onclick = gradeQuiz;
   document.getElementById("resultPanel").style.display = "none";
   document.getElementById("scoreBar").style.width = "0%";
   document.querySelector(".score-big").classList.remove("perfect");
   buildQuiz();
   updateProgress();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: scrollBehavior() });
 }
 
 buildQuiz();
+updateProgress();
 </script>
 </body>
 </html>
