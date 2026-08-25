@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>開けていない10万件</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
+
+<style>
+:root{
+  --ground:#F2F6F5;
+  --card:#FFFFFF;
+  --ink:#0F1F1D;
+  --ink-soft:#455A56;
+  --muted:#7B8F8B;
+  --line:#DAE4E1;
+  --line-soft:#EAF0EE;
+  --teal:#0D6E62;
+  --teal-deep:#08544A;
+  --teal-wash:#E1EEEB;
+  --amber:#A8690E;
+  --clay:#A34328;
+  --shadow:0 1px 2px rgba(15,31,29,.05),0 12px 40px -18px rgba(15,31,29,.22);
+  --font-jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --font-num:"Barlow Condensed","Zen Kaku Gothic New","Hiragino Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#09110F;
+    --card:#111C1A;
+    --ink:#E9F0ED;
+    --ink-soft:#A6B9B4;
+    --muted:#778B87;
+    --line:#20302D;
+    --line-soft:#182624;
+    --teal:#3BA593;
+    --teal-deep:#6ECBB7;
+    --teal-wash:#13312B;
+    --amber:#D3A144;
+    --clay:#D07A5E;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#09110F;
+  --card:#111C1A;
+  --ink:#E9F0ED;
+  --ink-soft:#A6B9B4;
+  --muted:#778B87;
+  --line:#20302D;
+  --line-soft:#182624;
+  --teal:#3BA593;
+  --teal-deep:#6ECBB7;
+  --teal-wash:#13312B;
+  --amber:#D3A144;
+  --clay:#D07A5E;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 40px -18px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--font-jp);
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+}
+.deck{
+  height:100vh;
+  overflow-y:auto;
+  scroll-snap-type:y mandatory;
+  scroll-behavior:smooth;
+}
+@media (prefers-reduced-motion: reduce){ .deck{scroll-behavior:auto} }
+
+.slide{
+  scroll-snap-align:start;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:clamp(16px,2.4vw,40px);
+}
+.frame{
+  width:min(1180px,100%);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:3px;
+  box-shadow:var(--shadow);
+  padding:clamp(26px,3.4vw,56px) clamp(24px,3.8vw,62px);
+  display:flex;
+  flex-direction:column;
+  gap:clamp(16px,2vw,28px);
+  position:relative;
+  min-height:min(680px,86vh);
+}
+.frame::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;
+  height:3px;
+  background:var(--teal);
+  border-radius:3px 3px 0 0;
+}
+
+.eyebrow{
+  font-family:var(--font-num);
+  font-weight:600;
+  font-size:clamp(.78rem,1.05vw,.95rem);
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--teal);
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:.7em;
+}
+.eyebrow .jp{
+  font-family:var(--font-jp);
+  font-weight:700;
+  letter-spacing:.08em;
+  font-size:.92em;
+  color:var(--ink-soft);
+  text-transform:none;
+}
+
+h1{
+  font-size:clamp(1.65rem,3.35vw,2.75rem);
+  font-weight:900;
+  line-height:1.4;
+  letter-spacing:.005em;
+  margin:0;
+  text-wrap:balance;
+}
+h2{
+  font-size:clamp(1.4rem,2.7vw,2.15rem);
+  font-weight:900;
+  line-height:1.4;
+  letter-spacing:.005em;
+  margin:0;
+  text-wrap:balance;
+}
+.lead{
+  font-size:clamp(.98rem,1.42vw,1.22rem);
+  line-height:1.85;
+  color:var(--ink-soft);
+  margin:0;
+  max-width:60ch;
+  font-weight:500;
+}
+.note{
+  font-size:clamp(.78rem,.98vw,.89rem);
+  line-height:1.85;
+  color:var(--muted);
+  margin:0;
+  max-width:74ch;
+}
+strong.hl{ color:var(--ink); font-weight:700; }
+em.acc{ font-style:normal; color:var(--teal); font-weight:700; }
+
+.num{
+  font-family:var(--font-num);
+  font-variant-numeric:tabular-nums;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.005em;
+}
+.num .unit{ font-size:.44em;font-weight:700;margin-left:.18em;letter-spacing:.02em; }
+
+.pagenum{
+  position:absolute;
+  right:clamp(20px,2.6vw,38px);
+  bottom:clamp(16px,2vw,28px);
+  font-family:var(--font-num);
+  font-weight:600;
+  font-size:.88rem;
+  letter-spacing:.14em;
+  color:var(--muted);
+}
+
+/* ---- title slide ---- */
+.title-frame{ justify-content:center; gap:clamp(20px,2.6vw,34px); }
+.title-rule{ width:64px;height:4px;background:var(--teal);border-radius:2px; }
+.title-meta{
+  display:flex;flex-wrap:wrap;gap:clamp(14px,2.4vw,36px);
+  padding-top:clamp(12px,1.6vw,20px);
+  border-top:1px solid var(--line-soft);
+  margin-top:auto;
+}
+.title-meta div{ display:flex;flex-direction:column;gap:.35em; }
+.title-meta dt{
+  font-family:var(--font-num);
+  font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;
+}
+.title-meta dd{ margin:0;font-size:clamp(.84rem,1.02vw,.95rem);font-weight:500;color:var(--ink-soft);line-height:1.6; }
+
+/* ---- stat row ---- */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:1px;
+  background:var(--line-soft);
+  border:1px solid var(--line-soft);
+}
+.stat{
+  background:var(--card);
+  padding:clamp(14px,1.7vw,21px) clamp(14px,1.8vw,23px);
+  display:flex;flex-direction:column;gap:.55em;
+}
+.stat .k{ font-size:clamp(.75rem,.94vw,.85rem);color:var(--muted);font-weight:700;letter-spacing:.03em; }
+.stat .v{ font-size:clamp(1.8rem,3.2vw,2.7rem);white-space:nowrap; }
+.stat .v.down{ color:var(--clay); }
+.stat .v.up{ color:var(--teal); }
+.stat .s{ font-size:clamp(.75rem,.94vw,.85rem);color:var(--ink-soft);line-height:1.7; }
+
+/* ---- chart ---- */
+.chart{ width:100%; }
+.chart svg{ width:100%;height:auto;display:block;overflow:visible; }
+.legend{
+  display:flex;flex-wrap:wrap;gap:clamp(12px,1.8vw,24px);
+  font-size:clamp(.75rem,.94vw,.86rem);font-weight:700;color:var(--ink-soft);
+}
+.legend span{display:flex;align-items:center;gap:.5em}
+.swatch{width:22px;height:3px;border-radius:2px;display:inline-block;flex:none}
+
+/* ---- bars ---- */
+.bars{ display:flex;flex-direction:column;gap:clamp(10px,1.3vw,16px); }
+.bar-row{ display:grid;grid-template-columns:minmax(150px,1.15fr) 3fr;gap:clamp(10px,1.6vw,20px);align-items:center; }
+.bar-label{ display:flex;flex-direction:column;gap:.25em; }
+.bar-label .n{ font-weight:700;font-size:clamp(.84rem,1.08vw,.98rem);line-height:1.4; }
+.bar-label .m{ font-size:clamp(.71rem,.88vw,.8rem);color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.5; }
+.bar-track{ display:flex;align-items:center;gap:.75em; }
+.bar-fill{ height:clamp(20px,2.2vw,28px);border-radius:2px;background:var(--teal);min-width:3px;flex:none; }
+.bar-fill.faint{ background:var(--teal-wash);border:1px solid var(--teal); }
+.bar-val{
+  font-family:var(--font-num);font-weight:700;
+  font-size:clamp(.95rem,1.4vw,1.25rem);
+  font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink);
+}
+
+/* ---- market compare ---- */
+.market{ display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,26px); }
+@media (max-width:760px){ .market{grid-template-columns:1fr} }
+.mcard{ border:1px solid var(--line);padding:clamp(16px,2vw,25px);display:flex;flex-direction:column;gap:.75em; }
+.mcard.focus{ border-color:var(--teal);background:var(--teal-wash); }
+.mcard .cap{ font-size:clamp(.77rem,.96vw,.87rem);font-weight:700;color:var(--muted);letter-spacing:.03em;line-height:1.5; }
+.mcard .big{ font-size:clamp(2.2rem,4.8vw,3.9rem);color:var(--ink);white-space:nowrap; }
+.mcard .big .unit{ font-size:.3em;font-weight:700;margin-left:.22em; }
+.mcard .desc{ font-size:clamp(.79rem,.98vw,.9rem);color:var(--ink-soft);line-height:1.8; }
+.mcard .rate{ font-family:var(--font-num);font-weight:700;font-size:clamp(1.05rem,1.6vw,1.4rem);color:var(--teal);font-variant-numeric:tabular-nums; }
+
+/* ---- formula ---- */
+.formula{
+  display:grid;
+  grid-template-columns:1fr auto 1fr auto 1fr auto 1.18fr;
+  align-items:stretch;
+  gap:clamp(5px,.8vw,12px);
+}
+@media (max-width:900px){
+  .formula{grid-template-columns:1fr;gap:8px}
+  .op{transform:rotate(90deg);padding:2px 0}
+}
+.fcell{
+  border:1px solid var(--line);
+  padding:clamp(12px,1.5vw,19px);
+  display:flex;flex-direction:column;gap:.42em;justify-content:center;
+}
+.fcell.result{ border-color:var(--teal);background:var(--teal-wash); }
+.fcell .cap{ font-size:clamp(.73rem,.9vw,.83rem);font-weight:700;color:var(--muted);letter-spacing:.02em;white-space:nowrap; }
+.fcell .from{ font-family:var(--font-num);font-weight:600;font-size:clamp(.95rem,1.3vw,1.15rem);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap; }
+.fcell .to{ font-size:clamp(1.5rem,2.6vw,2.25rem);color:var(--teal-deep);white-space:nowrap; }
+.fcell .past{ font-size:clamp(.71rem,.86vw,.79rem);color:var(--ink-soft);line-height:1.6; }
+.op{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-num);font-size:clamp(1.1rem,1.9vw,1.7rem);
+  color:var(--muted);font-weight:600;
+}
+
+/* ---- case ---- */
+.case{ display:grid;grid-template-columns:1.02fr 1fr;gap:clamp(18px,2.6vw,38px);align-items:start; }
+@media (max-width:820px){ .case{grid-template-columns:1fr} }
+.case-stats{ display:flex;flex-direction:column;gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);margin-top:1.1em; }
+.case-stat{ background:var(--card);padding:clamp(11px,1.4vw,18px) clamp(13px,1.6vw,20px);display:flex;align-items:baseline;justify-content:space-between;gap:1em; }
+.case-stat .k{ font-size:clamp(.79rem,.98vw,.9rem);font-weight:700;color:var(--ink-soft); }
+.case-stat .v{ font-size:clamp(1.45rem,2.4vw,2rem);color:var(--teal);white-space:nowrap; }
+.steps{ margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:clamp(10px,1.3vw,15px); }
+.steps li{ display:grid;grid-template-columns:auto 1fr;gap:.85em;font-size:clamp(.82rem,1.02vw,.95rem);line-height:1.8;color:var(--ink-soft); }
+.steps .mk{
+  font-family:var(--font-num);font-weight:700;font-size:.95em;
+  color:var(--teal);border:1px solid var(--teal);border-radius:2px;
+  width:1.85em;height:1.85em;display:flex;align-items:center;justify-content:center;
+  font-variant-numeric:tabular-nums;flex:none;margin-top:.15em;
+}
+.steps b{ color:var(--ink);font-weight:700; }
+
+/* ---- mission ---- */
+.mission{ display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,34px); }
+@media (max-width:820px){ .mission{grid-template-columns:1fr} }
+.kpi-list{ display:flex;flex-direction:column;gap:1px;background:var(--line-soft);border:1px solid var(--line-soft); }
+.kpi{ background:var(--card);padding:clamp(11px,1.4vw,17px) clamp(13px,1.5vw,18px);display:grid;grid-template-columns:1fr auto auto;gap:.9em;align-items:baseline; }
+.kpi .k{ font-weight:700;font-size:clamp(.82rem,1.02vw,.94rem); }
+.kpi .now{ font-family:var(--font-num);font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;font-size:clamp(.92rem,1.15vw,1.05rem);white-space:nowrap; }
+.kpi .tgt{ font-family:var(--font-num);font-weight:700;color:var(--teal);font-variant-numeric:tabular-nums;font-size:clamp(1.1rem,1.5vw,1.35rem);white-space:nowrap; }
+.todo{ margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:clamp(9px,1.2vw,13px); }
+.todo li{ display:grid;grid-template-columns:auto 1fr;gap:.8em;align-items:start;font-size:clamp(.82rem,1.02vw,.94rem);line-height:1.78;color:var(--ink-soft); }
+.todo .dot{ width:7px;height:7px;border-radius:50%;background:var(--teal);margin-top:.7em;flex:none; }
+.todo b{color:var(--ink);font-weight:700}
+.closing{
+  border-left:3px solid var(--teal);
+  padding:clamp(10px,1.2vw,15px) clamp(14px,1.7vw,20px);
+  font-size:clamp(.9rem,1.25vw,1.1rem);
+  font-weight:700;line-height:1.85;color:var(--ink);
+  margin-top:.4em;
+}
+
+.subhead{
+  font-size:clamp(.87rem,1.15vw,1rem);
+  font-weight:700;color:var(--teal);
+  letter-spacing:.02em;
+  margin:0 0 .6em;
+}
+.split{ display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.4vw,34px);align-items:start; }
+@media (max-width:820px){ .split{grid-template-columns:1fr} }
+
+.hint{
+  position:fixed;right:14px;bottom:12px;z-index:20;
+  font-family:var(--font-num);font-size:.78rem;letter-spacing:.1em;
+  color:var(--muted);background:var(--card);border:1px solid var(--line);
+  padding:5px 10px;border-radius:2px;opacity:.85;
+}
+:focus-visible{ outline:2px solid var(--teal);outline-offset:3px; }
+</style>
+
+</head>
+<body>
+<div class="deck" id="deck" tabindex="-1">
+
+  <!-- 1 ------------------------------------------------------------ -->
+  <section class="slide">
+    <div class="frame title-frame">
+      <div class="eyebrow">2026.02 — 2026.07 <span class="jp">インサイドセールス実績にもとづく現状共有</span></div>
+      <div class="title-rule"></div>
+      <h1>フラグのある先を追うフェーズから、<br>フラグのない先を開けるフェーズへ</h1>
+      <p class="lead">中断先・コールアウト先・新規開業案件は、この6か月で追い切りました。次に開けるのは、<em class="acc">まだ一度も電話をかけていない104,216件</em>です。</p>
+      <div class="title-meta">
+        <div><dt>Data</dt><dd>kintone 活動履歴（App27）／取引先（App58）</dd></div>
+        <div><dt>Scope</dt><dd>IS全体・2026年2月〜7月</dd></div>
+        <div><dt>Date</dt><dd>2026年8月25日</dd></div>
+      </div>
+      <div class="pagenum">01 / 07</div>
+    </div>
+  </section>
+
+  <!-- 2 ------------------------------------------------------------ -->
+  <section class="slide">
+    <div class="frame">
+      <div class="eyebrow">01 <span class="jp">起きていること</span></div>
+      <h2>架電を1.4倍にしても、アポは増えていません</h2>
+
+      <div class="chart">
+        <svg viewBox="0 0 900 330" role="img" aria-label="2026年2月を100とした指数の推移。架電数は6月に144.8まで上昇、着電率は72.7へ低下、アポ数は75.1へ低下。">
+          <g stroke="var(--line-soft)" stroke-width="1">
+            <line x1="60" y1="53.3" x2="840" y2="53.3"></line>
+            <line x1="60" y1="120" x2="840" y2="120"></line>
+            <line x1="60" y1="186.7" x2="840" y2="186.7"></line>
+            <line x1="60" y1="253.3" x2="840" y2="253.3"></line>
+          </g>
+          <line x1="60" y1="173.3" x2="840" y2="173.3" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="5 4"></line>
+          <g font-family="Barlow Condensed, sans-serif" font-size="14" font-weight="600" fill="var(--muted)" text-anchor="end">
+            <text x="52" y="57">150</text>
+            <text x="52" y="124">125</text>
+            <text x="52" y="177" font-weight="700" fill="var(--ink-soft)">100</text>
+            <text x="52" y="257">75</text>
+          </g>
+
+          <polyline points="125,173.3 255,112.5 385,88.3 515,78.7 645,53.9 775,140"
+            fill="none" stroke="var(--amber)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+          <polyline points="125,173.3 255,188 385,195.7 515,206.1 645,236 775,246.1"
+            fill="none" stroke="var(--teal)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+          <polyline points="125,173.3 255,209.6 385,130.7 515,182.1 645,168.3 775,239.7"
+            fill="none" stroke="var(--clay)" stroke-width="3.5" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+
+          <g fill="var(--amber)">
+            <circle cx="125" cy="173.3" r="4.5"></circle><circle cx="255" cy="112.5" r="4.5"></circle>
+            <circle cx="385" cy="88.3" r="4.5"></circle><circle cx="515" cy="78.7" r="4.5"></circle>
+            <circle cx="645" cy="53.9" r="6"></circle><circle cx="775" cy="140" r="4.5"></circle>
+          </g>
+          <g fill="var(--teal)">
+            <circle cx="125" cy="173.3" r="4.5"></circle><circle cx="255" cy="188" r="4.5"></circle>
+            <circle cx="385" cy="195.7" r="4.5"></circle><circle cx="515" cy="206.1" r="4.5"></circle>
+            <circle cx="645" cy="236" r="4.5"></circle><circle cx="775" cy="246.1" r="6"></circle>
+          </g>
+          <g fill="var(--clay)">
+            <circle cx="125" cy="173.3" r="4.5"></circle><circle cx="255" cy="209.6" r="4.5"></circle>
+            <circle cx="385" cy="130.7" r="4.5"></circle><circle cx="515" cy="182.1" r="4.5"></circle>
+            <circle cx="645" cy="168.3" r="4.5"></circle><circle cx="775" cy="239.7" r="6"></circle>
+          </g>
+
+          <g font-family="Barlow Condensed, sans-serif" font-size="17" font-weight="700">
+            <text x="645" y="38" text-anchor="middle" fill="var(--amber)">144.8</text>
+            <text x="798" y="252" fill="var(--teal)">72.7</text>
+            <text x="798" y="229" fill="var(--clay)">75.1</text>
+          </g>
+
+          <g font-family="Zen Kaku Gothic New, sans-serif" font-size="15" font-weight="700" fill="var(--ink-soft)" text-anchor="middle">
+            <text x="125" y="300">2月</text><text x="255" y="300">3月</text><text x="385" y="300">4月</text>
+            <text x="515" y="300">5月</text><text x="645" y="300">6月</text><text x="775" y="300">7月</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--amber)"></i>架電数（活動数）</span>
+        <span><i class="swatch" style="background:var(--teal)"></i>着電率</span>
+        <span><i class="swatch" style="background:var(--clay)"></i>アポ獲得数</span>
+        <span style="color:var(--muted);font-weight:600">2026年2月を100とした指数</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="k">架電数（2月→6月）</span>
+          <span class="num v up">+44.8<span class="unit">%</span></span>
+          <span class="s">5,642 → 8,168件。量は確実に積み上げました</span>
+        </div>
+        <div class="stat">
+          <span class="k">着電率（2月→7月）</span>
+          <span class="num v down">-6.6<span class="unit">pt</span></span>
+          <span class="s">24.2% → 17.6%。6か月間ずっと下がり続けています</span>
+        </div>
+        <div class="stat">
+          <span class="k">アポ獲得数（2月→7月）</span>
+          <span class="num v down">-24.9<span class="unit">%</span></span>
+          <span class="s">213 → 160件。架電を増やしても戻っていません</span>
+        </div>
+      </div>
+      <div class="pagenum">02 / 07</div>
+    </div>
+  </section>
+
+  <!-- 3 ------------------------------------------------------------ -->
+  <section class="slide">
+    <div class="frame">
+      <div class="eyebrow">02 <span class="jp">原因</span></div>
+      <h2>反応が悪くなったのではなく、かける先が尽きています</h2>
+      <p class="lead">MQLは1社あたり<em class="acc">5.1回</em>かけています。中断先も在庫12,745社に対して10,212件を打ちました。一方でリード（MQL未満）は1社あたり0.14回、<strong class="hl">7社に1社しか触れていません。</strong></p>
+
+      <div class="bars">
+        <div class="bar-row">
+          <div class="bar-label"><span class="n">MQL</span><span class="m">母数 1,769社 ／ 架電 8,953件</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div><span class="bar-val">5.1回／社</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="n">顧客（オンライン診療・かかりつけ）</span><span class="m">母数 2,066社 ／ 架電 2,581件</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:24.7%"></div><span class="bar-val">1.2回／社</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="n">SQL（中断）</span><span class="m">母数 12,745社 ／ 架電 10,212件</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:15.8%"></div><span class="bar-val">0.8回／社</span></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span class="n">リード（MQL未満）</span><span class="m">母数 104,216社 ／ 架電 14,808件</span></div>
+          <div class="bar-track"><div class="bar-fill faint" style="width:2.8%"></div><span class="bar-val">0.14回／社</span></div>
+        </div>
+      </div>
+
+      <div class="split">
+        <div>
+          <p class="subhead">着電した相手の反応は変わっていません</p>
+          <p class="note">着電後のお断り率は <strong class="hl">2月 65.3%</strong>（892／1,366）、<strong class="hl">7月 65.1%</strong>（727／1,116）でほぼ同じです。断られ方が厳しくなったわけでも、他社決が急に増えたわけでもありません。落ちているのは<strong class="hl">着電率、つまり電話がつながる確率</strong>で、これは同じ先に何度もかけていることの結果です。</p>
+        </div>
+        <div>
+          <p class="subhead">数字が示していること</p>
+          <p class="note">狙うべき先を狙い切った、というのが実態です。中断理由が明確な先も新規開業案件も、6か月かけて一通りあたりました。ここから同じ母集団を掘り続けても、着電率はさらに下がります。<strong class="hl">母集団を入れ替えるタイミングに来ています。</strong></p>
+        </div>
+      </div>
+      <div class="pagenum">03 / 07</div>
+    </div>
+  </section>
+
+  <!-- 4 ------------------------------------------------------------ -->
+  <section class="slide">
+    <div class="frame">
+      <div class="eyebrow">03 <span class="jp">次にあたる先</span></div>
+      <h2>見込みが薄い先ではなく、まだ判定していない先です</h2>
+
+      <div class="market">
+        <div class="mcard">
+          <span class="cap">これまで追ってきた先（フラグあり）</span>
+          <span class="num big">16,580<span class="unit">社</span></span>
+          <span class="desc">MQL 1,769社 ＋ 顧客 2,066社 ＋ SQL（中断）12,745社。全在庫の <strong class="hl">8.3%</strong> にあたります。</span>
+          <span class="rate">アポ率 2.80〜3.76%</span>
+        </div>
+        <div class="mcard focus">
+          <span class="cap">まだ開けていない先（リード／MQL未満）</span>
+          <span class="num big">104,216<span class="unit">社</span></span>
+          <span class="desc">全在庫199,610社の <strong class="hl">52.2%</strong>。6か月で触れたのは0.14回／社にとどまります。</span>
+          <span class="rate">アポ率 2.31%</span>
+        </div>
+      </div>
+
+      <div class="split">
+        <div>
+          <p class="subhead">差は0.5ポイントです</p>
+          <p class="note">6か月・42,170件の実績で見ると、最も効率の良いセグメント（顧客 3.76%）とフラグのない先（2.31%）の差は <strong class="hl">1.6倍</strong> にとどまります。中断先（2.80%）との差は <strong class="hl">0.5ポイント</strong> です。「フラグがないから取れない」は、数字の上では成り立っていません。</p>
+        </div>
+        <div>
+          <p class="subhead">そのうえで母数が6.3倍あります</p>
+          <p class="note">アポ率が2割低くても、母数が6.3倍あれば取れる総数は変わります。リード104,216社のうち、この6か月で架電が届いたのは延べ14,808件。1社1回として多めに見積もっても <strong class="hl">7社に1社</strong> です。残る約9万社は、リストの中にありながら一度も鳴らしていません。</p>
+        </div>
+      </div>
+      <p class="note">※ アポ率は活動履歴（App27）のアポフラグ ÷ 活動数で算出しています。フラグ入力の揺れを含むため、絶対値ではなくセグメント間の比較としてご覧ください。</p>
+      <div class="pagenum">04 / 07</div>
+    </div>
+  </section>
+
+  <!-- 5 ------------------------------------------------------------ -->
+  <section class="slide">
+    <div class="frame">
+      <div class="eyebrow">04 <span class="jp">目標</span></div>
+      <h2>3つを120%にすると、アポは1.73倍になります</h2>
+      <p class="lead">ISの成果は「架電数 × 着電率 × アポ率」に分解できます。どれか一つを2倍にするのではなく、<em class="acc">3つを2割ずつ</em>引き上げます。</p>
+
+      <div class="formula">
+        <div class="fcell">
+          <span class="cap">架電数／月</span>
+          <span class="from">7,386 →</span>
+          <span class="num to">8,863</span>
+          <span class="past">6月実績 8,168 の +8.5%</span>
+        </div>
+        <div class="op">×</div>
+        <div class="fcell">
+          <span class="cap">着電率</span>
+          <span class="from">19.2% →</span>
+          <span class="num to">23.0<span class="unit">%</span></span>
+          <span class="past">2月実績 24.2% を下回る水準</span>
+        </div>
+        <div class="op">×</div>
+        <div class="fcell">
+          <span class="cap">アポ率（対着電）</span>
+          <span class="from">13.7% →</span>
+          <span class="num to">16.5<span class="unit">%</span></span>
+          <span class="past">2月実績 15.6% の +0.9pt</span>
+        </div>
+        <div class="op">=</div>
+        <div class="fcell result">
+          <span class="cap">アポ獲得数／月</span>
+          <span class="from">194 →</span>
+          <span class="num to">336<span class="unit">件</span></span>
+          <span class="past">月あたり +142件、半年で +852件</span>
+        </div>
+      </div>
+
+      <div class="split">
+        <div>
+          <p class="subhead">どれも一度は出している数字です</p>
+          <p class="note">着電率23.0%は2月（24.2%）と3月（22.9%）に達成済みです。アポ率16.5%は2月の15.6%まで来ています。未経験なのは架電8,863件だけで、これも6月の8,168件から <strong class="hl">+8.5%</strong> です。新しい挑戦というより、<strong class="hl">自分たちの最高値を同じ月に揃える</strong>という話になります。</p>
+        </div>
+        <div>
+          <p class="subhead">3指標それぞれの打ち手</p>
+          <ul class="todo">
+            <li><span class="dot"></span><b>架電数</b>　リスト供給を止めない。未接触リードを継続的に投入して「かける先がない」状態をなくします</li>
+            <li><span class="dot"></span><b>着電率</b>　叩き尽くした番号から未接触へ切り替える。時間帯設計（朝9〜10時台の優位性）をチーム全体で使います</li>
+            <li><span class="dot"></span><b>アポ率</b>　フラグなし先向けの初回トークを作る。中断先向けのスクリプトは前提が違うため流用できません</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">※ 現状値は直近3か月（5〜7月）の平均です。架電7,386件・着電率19.2%・アポ率13.7%で、アポ194件／月にあたります。</p>
+      <div class="pagenum">05 / 07</div>
+    </div>
+  </section>
+
+  <!-- 6 ------------------------------------------------------------ -->
+  <section class="slide">
+    <div class="frame">
+      <div class="eyebrow">05 <span class="jp">他社事例</span></div>
+      <h2>未接触の市場を開けたチームは、3か月で商談を6倍にしています</h2>
+
+      <div class="case">
+        <div>
+          <p class="lead" style="font-size:clamp(.88rem,1.2vw,1.04rem)">Braze株式会社のBDRチーム（3名＋外部パートナー）は、接点のない企業を対象に、リスト設計とアプローチ手法を作り直しました。2022年10月からの3か月の成果です。</p>
+          <div class="case-stats">
+            <div class="case-stat"><span class="k">商談獲得率</span><span class="num v">+556%</span></div>
+            <div class="case-stat"><span class="k">商談獲得数</span><span class="num v">6倍以上</span></div>
+            <div class="case-stat"><span class="k">対象リスト数</span><span class="num v">+15%</span></div>
+          </div>
+          <p class="note" style="margin-top:1.1em">リストは15%しか増やしていません。伸びたのは母数ではなく<strong class="hl">当て方</strong>のほうです。</p>
+        </div>
+        <div>
+          <p class="subhead">このチームがやったこと</p>
+          <ul class="steps">
+            <li><span class="mk">1</span><span><b>企業単位ではなく人物単位でリストを作りました。</b>受注率の高い業界を特定し、その中の未開拓企業を洗い出し、担当者名まで解像度を上げています</span></li>
+            <li><span class="mk">2</span><span><b>初回接点の中身を作り込みました。</b>目的を冒頭に置き、同業他社の事例を相手の関心に合わせて差し替えています</span></li>
+            <li><span class="mk">3</span><span><b>単一チャネルで終わらせていません。</b>接点後1週間は1営業日1回の架電、並行して別チャネルでも連続接触。商談の7割以上がマルチチャネル経由です</span></li>
+          </ul>
+          <p class="note" style="margin-top:1.3em">自分たちに置き換えると、医療機関を「クリニック」で括らず、診療科・規模・レセコン更新期でリストを切り分けること。初回架電のトークを未接触先用に作り直すこと。電話一本で終わらせず次の接点を設計すること。やることの構造は同じです。</p>
+        </div>
+      </div>
+      <p class="note">出典：山梨寛弥「アウトバウンド（手紙施策）からのエンタープライズ企業の商談獲得率が556％向上したので、BDRチームが実行した施策とフレームワークを振り返ります」note, 2023年</p>
+      <div class="pagenum">06 / 07</div>
+    </div>
+  </section>
+
+  <!-- 7 ------------------------------------------------------------ -->
+  <section class="slide">
+    <div class="frame">
+      <div class="eyebrow">06 <span class="jp">これから</span></div>
+      <h2>追う数字と、解くべき課題</h2>
+      <p class="lead">104,216社は、まだ可否を判定していない領域です。断られた記録もフラグとして残るため、いまの架電は<strong class="hl">次の一年に使うリストを作る作業</strong>でもあります。</p>
+
+      <div class="mission">
+        <div>
+          <p class="subhead">ナーチャリングが追う数字</p>
+          <div class="kpi-list">
+            <div class="kpi"><span class="k">架電数／月（チーム）</span><span class="now">7,386</span><span class="tgt">8,863</span></div>
+            <div class="kpi"><span class="k">着電率</span><span class="now">19.2%</span><span class="tgt">23.0%</span></div>
+            <div class="kpi"><span class="k">アポ率（対着電）</span><span class="now">13.7%</span><span class="tgt">16.5%</span></div>
+            <div class="kpi"><span class="k">アポ獲得数／月</span><span class="now">194</span><span class="tgt">336</span></div>
+            <div class="kpi"><span class="k">未接触先への架電比率</span><span class="now">35%</span><span class="tgt">60%</span></div>
+          </div>
+          <p class="note" style="margin-top:1em">現状値は2026年5〜7月の平均です。未接触先への架電比率は、活動全体に占めるリード（MQL未満）の割合を指します。</p>
+        </div>
+        <div>
+          <p class="subhead">解くべき課題は3つです</p>
+          <ul class="todo">
+            <li><span class="dot"></span><b>リストが止まらない仕組み</b>　10.4万社から誰に・どの順でかけるかを設計します。個人の在庫切れをチームの課題として扱います</li>
+            <li><span class="dot"></span><b>未接触先の初回トーク</b>　「以前ご検討いただいた件で」が使えません。ゼロから関心を作る型を全員で共有します</li>
+            <li><span class="dot"></span><b>活動記録の精度</b>　着電フラグ・アポフラグの入力が揃わないと、この3指標は追えません。計測できないものは改善もできません</li>
+          </ul>
+          <p class="closing">取れなくなったのではなく、取り切りました。<br>ここから次の母集団に移ります。</p>
+        </div>
+      </div>
+      <div class="pagenum">07 / 07</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="hint">← → / SPACE</div>
+
+<script>
+(function(){
+  var deck = document.getElementById('deck');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  function current(){
+    var top = deck.scrollTop, best = 0, min = Infinity;
+    slides.forEach(function(s, i){
+      var d = Math.abs(s.offsetTop - top);
+      if (d < min){ min = d; best = i; }
+    });
+    return best;
+  }
+  function go(n){
+    var i = Math.max(0, Math.min(slides.length - 1, n));
+    slides[i].scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){
+      e.preventDefault(); go(current() + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp'){
+      e.preventDefault(); go(current() - 1);
+    } else if (e.key === 'Home'){ e.preventDefault(); go(0); }
+    else if (e.key === 'End'){ e.preventDefault(); go(slides.length - 1); }
+  });
+  deck.focus();
+})();
+</script>
+</body>
+</html>
