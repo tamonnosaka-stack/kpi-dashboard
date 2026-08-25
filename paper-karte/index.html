@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>紙カルテ商談の現在地</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+
+:root{
+  --ground:#F4F6F2; --surface:#FFFFFF; --sunk:#ECEFE9;
+  --ink:#191E1B; --ink-2:#414A44; --muted:#6D7871; --line:#DCE2DA; --line-2:#C6CEC3;
+  --accent:#0E6F63; --accent-soft:#DCEDE8; --warn:#A8541D; --warn-soft:#F6E7DA;
+  --good:#2E6B3E; --good-soft:#E0EEE1; --flat:#8A9490;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --serif:'Zen Old Mincho',serif; --sans:'Zen Kaku Gothic New',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#12160F; --surface:#1A1F1B; --sunk:#232922;
+    --ink:#E9EFE8; --ink-2:#C3CCC2; --muted:#8E9A90; --line:#2E362E; --line-2:#3E483D;
+    --accent:#5AC5B0; --accent-soft:#1E3730; --warn:#D9925A; --warn-soft:#3A2A1C;
+    --good:#7CC28C; --good-soft:#1F3324; --flat:#77837C;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+  font-size:15.5px;line-height:1.85;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px 120px}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(14,111,99,.35)}
+a:hover{border-bottom-color:currentColor}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+header.masthead{padding:72px 0 32px;border-bottom:2px solid var(--ink)}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 18px}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(32px,5.2vw,52px);line-height:1.24;margin:0 0 18px;letter-spacing:.01em}
+.lede{font-size:17px;line-height:1.9;color:var(--ink-2);max-width:62ch;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:24px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.meta b{color:var(--ink-2);font-weight:500}
+.verdict{margin-top:32px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);padding:26px 28px}
+.verdict h2{font-family:var(--serif);font-size:19px;margin:0 0 12px;font-weight:700}
+.verdict p{margin:0 0 12px;color:var(--ink-2)}
+.verdict p:last-child{margin-bottom:0}
+.verdict strong{color:var(--ink);font-weight:700}
+section{padding-top:60px}
+h2.sec{font-family:var(--serif);font-size:27px;font-weight:700;margin:0 0 6px;line-height:1.4}
+.sec-no{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:10px}
+.sec-lede{color:var(--muted);margin:0 0 28px;font-size:14.5px;max-width:64ch}
+h3{font-family:var(--serif);font-size:19px;font-weight:700;margin:42px 0 14px;line-height:1.5}
+p{margin:0 0 16px;max-width:68ch}
+.note{font-size:13.5px;color:var(--muted);line-height:1.8}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(166px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:22px 0 8px}
+.stat{background:var(--surface);padding:20px}
+.stat .k{font-family:var(--mono);font-size:11px;letter-spacing:.09em;color:var(--muted);display:block;margin-bottom:9px}
+.stat .v{font-family:var(--mono);font-size:29px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;display:block}
+.stat .u{font-size:14px;font-weight:400;color:var(--muted);margin-left:3px}
+.stat .s{font-size:12.5px;color:var(--muted);display:block;margin-top:9px;line-height:1.6}
+.stat.hi .v{color:var(--accent)}
+.stat.wn .v{color:var(--warn)}
+.tw{overflow-x:auto;border:1px solid var(--line);background:var(--surface);margin:22px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:660px}
+caption{text-align:left;font-size:12.5px;color:var(--muted);padding:14px 16px 0;font-family:var(--mono)}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted);font-weight:500;
+  background:var(--sunk);border-bottom:1px solid var(--line-2);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td.sm{font-size:12.5px;color:var(--ink-2)}
+tr.emph td{background:var(--accent-soft)}
+tr.emph td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+tfoot td{font-family:var(--mono);font-size:12px;color:var(--muted);background:var(--sunk)}
+.bar{display:inline-block;height:9px;background:var(--accent);vertical-align:middle;border-radius:1px;min-width:2px}
+.bar.dim{background:var(--flat)}
+.tag{font-family:var(--mono);font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:2px;border:1px solid var(--line-2);color:var(--ink-2)}
+.tag.tN{background:var(--good-soft);border-color:transparent;color:var(--good)}
+.tag.tX{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.tag.tT{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.res{font-size:11.5px;padding:2px 7px;border-radius:2px;white-space:nowrap;display:inline-block}
+.res.won{background:var(--good-soft);color:var(--good);font-weight:700}
+.res.open{background:var(--accent-soft);color:var(--accent)}
+.res.lost{background:var(--sunk);color:var(--muted)}
+.res.cancel{background:var(--warn-soft);color:var(--warn)}
+.own{font-size:11.5px;padding:2px 7px;border-radius:2px;white-space:nowrap;display:inline-block}
+.own.self{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.own.other{background:var(--warn-soft);color:var(--warn)}
+.own.none{background:var(--sunk);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted);margin:14px 0 0}
+.legend b{color:var(--ink-2);font-weight:500}
+.callout{background:var(--surface);border:1px solid var(--line);padding:22px 24px;margin:26px 0}
+.callout.warn{border-left:4px solid var(--warn)}
+.callout.act{border-left:4px solid var(--accent)}
+.callout h4{font-size:15px;font-weight:700;margin:0 0 10px}
+.callout p:last-child{margin-bottom:0}
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:24px 0 0;display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+ol.steps>li{counter-increment:s;background:var(--surface);padding:24px 26px 24px 74px;position:relative}
+ol.steps>li::before{content:counter(s);position:absolute;left:26px;top:24px;font-family:var(--mono);font-size:13px;
+  font-weight:600;color:var(--accent);border:1.5px solid var(--accent);width:26px;height:26px;line-height:23px;text-align:center;border-radius:50%}
+ol.steps h4{font-family:var(--serif);font-size:17px;font-weight:700;margin:0 0 8px}
+ol.steps p{margin:0 0 8px;font-size:14.5px;color:var(--ink-2)}
+ol.steps p:last-child{margin-bottom:0}
+.who{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+footer{margin-top:78px;padding-top:26px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.9}
+footer code{font-family:var(--mono);font-size:11.5px;background:var(--sunk);padding:1px 5px;border-radius:2px}
+@media (max-width:640px){
+  header.masthead{padding-top:48px}
+  ol.steps>li{padding:22px 20px}
+  ol.steps>li::before{position:static;display:block;margin-bottom:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+tr.hl td{background:var(--accent-soft)}
+tr.hl td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.barcell{width:34%}
+.trend{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin:22px 0}
+.trend div{background:var(--surface);padding:16px 14px;text-align:center}
+.trend .y{font-family:var(--mono);font-size:11px;color:var(--muted);display:block;margin-bottom:8px}
+.trend .n{font-family:var(--mono);font-size:24px;font-weight:600;display:block;line-height:1}
+.trend .r{font-size:11.5px;color:var(--muted);display:block;margin-top:6px}
+.trend div.now .n{color:var(--accent)}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="masthead">
+  <p class="eyebrow">CLINICSカルテ ／ kintone App29 ／ 2026-08-25</p>
+  <h1>紙カルテ商談の現在地</h1>
+  <p class="lede">紙カルテ運用の医療機関からどれだけアポが取れているのか、その数と推移、そして何をきっかけに獲得できているのかを、カルテ商談9,452件から抽出しました。</p>
+  <div class="meta">
+    <span><b>母集団</b> カルテ商談（アポ獲得日あり）9,452件</span>
+    <span><b>紙カルテ先</b> 1,275件</span>
+    <span><b>取扱い</b> 社内共有用／集計のみ</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h2>要点</h2>
+  <p><strong>紙カルテ先からのアポは増えています。</strong>直近12ヶ月（2025-08〜）で266件。半期で見ると 2024H1 77件 → 2024H2 39件 → 2025H1 86件 → 2025H2 110件 → <strong>2026H1 159件</strong>と、過去最高を更新中です。</p>
+  <p><strong>現行カルテが判明している商談に占める比率も上昇。</strong>2023年20.2% → 2024年25.8% → 2025年28.9% → 2026年34.1%。2026年4月は50.0%、5月は45.2%と、月によっては新規カルテ商談の半分が紙カルテ先です。</p>
+  <p><strong>取れ方が電子カルテ既設先と違います。</strong>最大の違いはFAX（紙14% / 電子既設7%）。加えて承継・継承がトリガーになるケースが61件（23%）と多く、Web・リスティング経由は受注率が16〜22%と高い。<strong>紙は「届く手段」と「代替わり」で取れています。</strong></p>
+</div>
+
+<section>
+  <span class="sec-no">前提 ／ Definitions</span>
+  <h2 class="sec">紙カルテ先の判定方法</h2>
+  <p class="sec-lede">kintoneに「現在紙カルテかどうか」を示す信頼できるフィールドがないため、商談記録の本文から判定しています。</p>
+  <div class="tw"><table>
+    <thead><tr><th style="width:26%">項目</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>母集団</td><td>product＝CLINICSカルテ、フェーズが「リサイクル」「セミナー集客のみ」以外、かつ <code>appintment_setting_date</code> が入っている商談 9,452件</td></tr>
+      <tr><td>紙カルテ判定</td><td>説明(カルテ)欄のカルテ/レセコン記載欄（<code>2.現在利用中のカルテ/レセコン</code>／<code>【前カルテ/レセコン】</code>／<code>◾️カルテ/レセコン</code> など年代別テンプレ7種）に「紙」を含むもの。欄が取れない場合は本文に「紙カルテ」の言及があるものを採用。否定文脈は除外</td></tr>
+      <tr><td>比率の分母</td><td>上記の欄から現行カルテが読み取れた商談のみ（4,936件）。全商談を分母にすると、記載のない商談を「紙ではない」と誤って数えるため</td></tr>
+      <tr><td>使わなかったもの</td><td><code>using_karte_type</code>（商談側）は20,835件中7件しか入力がなく使用不可。取引先アプリ側は1,515社が「紙カルテ」だが、商談との時点整合が取れないため参考値に留めた</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn">
+    <h4>比率は記入率に揺さぶられる</h4>
+    <p>分母となる「現行カルテ欄の記入率」は年によって53%〜85%と幅があります。比率の推移は参考として読み、<b>絶対数の推移を主として見てください</b>。2026年8月は25日時点の途中集計です。</p>
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">① ／ Volume</span>
+  <h2 class="sec">どれくらい取れているか</h2>
+
+  <div class="stats">
+    <div class="stat hi"><span class="k">直近12ヶ月</span><span class="v">266<span class="u">件</span></span><span class="s">2025-08〜2026-08-25</span></div>
+    <div class="stat"><span class="k">2026年 累計</span><span class="v">187<span class="u">件</span></span><span class="s">8月25日時点で前年通年を下回るのみ</span></div>
+    <div class="stat"><span class="k">2026H1</span><span class="v">159<span class="u">件</span></span><span class="s">半期として過去最高</span></div>
+    <div class="stat wn"><span class="k">紙比率（2026年）</span><span class="v">34.1<span class="u">%</span></span><span class="s">現行カルテ判明商談に占める割合</span></div>
+  </div>
+
+  <h3>年次推移</h3>
+  <div class="trend">
+    <div><span class="y">2020</span><span class="n">230</span><span class="r">28.9%</span></div>
+    <div><span class="y">2021</span><span class="n">167</span><span class="r">20.4%</span></div>
+    <div><span class="y">2022</span><span class="n">197</span><span class="r">25.8%</span></div>
+    <div><span class="y">2023</span><span class="n">150</span><span class="r">20.2%</span></div>
+    <div><span class="y">2024</span><span class="n">116</span><span class="r">25.8%</span></div>
+    <div><span class="y">2025</span><span class="n">196</span><span class="r">28.9%</span></div>
+    <div class="now"><span class="y">2026（8/25まで）</span><span class="n">187</span><span class="r">34.1%</span></div>
+  </div>
+  <p>2023〜2024年に底（150→116件）を打ち、2025年から反転。2026年は8ヶ月で187件と、すでに2025年通年（196件）に並ぶ勢いです。比率も2023年の20.2%から34.1%へ、<b>1.7倍</b>になっています。</p>
+
+  <h3>半期推移</h3>
+  <div class="tw"><table>
+    <thead><tr><th>半期</th><th class="num">カルテアポ総数</th><th class="num">現行カルテ判明</th><th class="num">紙カルテ</th><th class="num">紙比率</th><th class="barcell"></th></tr></thead>
+    <tbody>
+      <tr><td>2024H1</td><td class="num">480</td><td class="num">324</td><td class="num">77</td><td class="num">23.8%</td><td><span class="bar" style="width:48%"></span></td></tr>
+      <tr><td>2024H2</td><td class="num">549</td><td class="num">125</td><td class="num">39</td><td class="num">31.2%</td><td><span class="bar" style="width:25%"></span></td></tr>
+      <tr><td>2025H1</td><td class="num">861</td><td class="num">247</td><td class="num">86</td><td class="num">34.8%</td><td><span class="bar" style="width:54%"></span></td></tr>
+      <tr><td>2025H2</td><td class="num">954</td><td class="num">431</td><td class="num">110</td><td class="num">25.5%</td><td><span class="bar" style="width:69%"></span></td></tr>
+      <tr class="hl"><td>2026H1</td><td class="num">1,033</td><td class="num">445</td><td class="num">159</td><td class="num">35.7%</td><td><span class="bar" style="width:100%"></span></td></tr>
+      <tr><td>2026H2（途中）</td><td class="num">264</td><td class="num">104</td><td class="num">28</td><td class="num">26.9%</td><td><span class="bar" style="width:18%"></span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>月次推移</h3>
+  <div class="tw"><table>
+    <caption>2024-01〜2026-08（アポ獲得日ベース）</caption>
+    <thead><tr><th class="num">月</th><th class="num">カルテアポ</th><th class="num">現行カルテ判明</th><th class="num">紙カルテ</th><th class="num">紙比率</th><th class="barcell"></th></tr></thead>
+    <tbody>
+<tr><td class="num">2024-01</td><td class="num">95</td><td class="num">71</td><td class="num"><b>14</b></td><td class="num">19.7%</td><td><span class="bar" style="width:42%"></span></td></tr>
+<tr><td class="num">2024-02</td><td class="num">67</td><td class="num">53</td><td class="num"><b>16</b></td><td class="num">30.2%</td><td><span class="bar" style="width:48%"></span></td></tr>
+<tr><td class="num">2024-03</td><td class="num">80</td><td class="num">52</td><td class="num"><b>12</b></td><td class="num">23.1%</td><td><span class="bar" style="width:36%"></span></td></tr>
+<tr><td class="num">2024-04</td><td class="num">91</td><td class="num">49</td><td class="num"><b>11</b></td><td class="num">22.4%</td><td><span class="bar" style="width:33%"></span></td></tr>
+<tr><td class="num">2024-05</td><td class="num">71</td><td class="num">50</td><td class="num"><b>13</b></td><td class="num">26.0%</td><td><span class="bar" style="width:39%"></span></td></tr>
+<tr><td class="num">2024-06</td><td class="num">76</td><td class="num">49</td><td class="num"><b>11</b></td><td class="num">22.4%</td><td><span class="bar" style="width:33%"></span></td></tr>
+<tr><td class="num">2024-07</td><td class="num">80</td><td class="num">40</td><td class="num"><b>8</b></td><td class="num">20.0%</td><td><span class="bar" style="width:24%"></span></td></tr>
+<tr><td class="num">2024-08</td><td class="num">76</td><td class="num">9</td><td class="num"><b>4</b></td><td class="num">44.4%</td><td><span class="bar" style="width:12%"></span></td></tr>
+<tr><td class="num">2024-09</td><td class="num">92</td><td class="num">7</td><td class="num"><b>4</b></td><td class="num">57.1%</td><td><span class="bar" style="width:12%"></span></td></tr>
+<tr><td class="num">2024-10</td><td class="num">94</td><td class="num">12</td><td class="num"><b>2</b></td><td class="num">16.7%</td><td><span class="bar" style="width:6%"></span></td></tr>
+<tr><td class="num">2024-11</td><td class="num">99</td><td class="num">31</td><td class="num"><b>9</b></td><td class="num">29.0%</td><td><span class="bar" style="width:27%"></span></td></tr>
+<tr><td class="num">2024-12</td><td class="num">108</td><td class="num">26</td><td class="num"><b>12</b></td><td class="num">46.2%</td><td><span class="bar" style="width:36%"></span></td></tr>
+<tr><td class="num">2025-01</td><td class="num">112</td><td class="num">37</td><td class="num"><b>10</b></td><td class="num">27.0%</td><td><span class="bar" style="width:30%"></span></td></tr>
+<tr><td class="num">2025-02</td><td class="num">123</td><td class="num">29</td><td class="num"><b>12</b></td><td class="num">41.4%</td><td><span class="bar" style="width:36%"></span></td></tr>
+<tr><td class="num">2025-03</td><td class="num">147</td><td class="num">41</td><td class="num"><b>7</b></td><td class="num">17.1%</td><td><span class="bar" style="width:21%"></span></td></tr>
+<tr><td class="num">2025-04</td><td class="num">129</td><td class="num">29</td><td class="num"><b>8</b></td><td class="num">27.6%</td><td><span class="bar" style="width:24%"></span></td></tr>
+<tr><td class="num">2025-05</td><td class="num">153</td><td class="num">50</td><td class="num"><b>26</b></td><td class="num">52.0%</td><td><span class="bar" style="width:79%"></span></td></tr>
+<tr><td class="num">2025-06</td><td class="num">197</td><td class="num">61</td><td class="num"><b>23</b></td><td class="num">37.7%</td><td><span class="bar" style="width:70%"></span></td></tr>
+<tr><td class="num">2025-07</td><td class="num">174</td><td class="num">67</td><td class="num"><b>31</b></td><td class="num">46.3%</td><td><span class="bar" style="width:94%"></span></td></tr>
+<tr><td class="num">2025-08</td><td class="num">135</td><td class="num">65</td><td class="num"><b>19</b></td><td class="num">29.2%</td><td><span class="bar" style="width:58%"></span></td></tr>
+<tr><td class="num">2025-09</td><td class="num">178</td><td class="num">78</td><td class="num"><b>20</b></td><td class="num">25.6%</td><td><span class="bar" style="width:61%"></span></td></tr>
+<tr><td class="num">2025-10</td><td class="num">152</td><td class="num">58</td><td class="num"><b>10</b></td><td class="num">17.2%</td><td><span class="bar" style="width:30%"></span></td></tr>
+<tr><td class="num">2025-11</td><td class="num">172</td><td class="num">84</td><td class="num"><b>15</b></td><td class="num">17.9%</td><td><span class="bar" style="width:45%"></span></td></tr>
+<tr><td class="num">2025-12</td><td class="num">143</td><td class="num">79</td><td class="num"><b>15</b></td><td class="num">19.0%</td><td><span class="bar" style="width:45%"></span></td></tr>
+<tr class="hl"><td class="num">2026-01</td><td class="num">169</td><td class="num">87</td><td class="num"><b>23</b></td><td class="num">26.4%</td><td><span class="bar" style="width:70%"></span></td></tr>
+<tr class="hl"><td class="num">2026-02</td><td class="num">168</td><td class="num">85</td><td class="num"><b>31</b></td><td class="num">36.5%</td><td><span class="bar" style="width:94%"></span></td></tr>
+<tr class="hl"><td class="num">2026-03</td><td class="num">152</td><td class="num">66</td><td class="num"><b>18</b></td><td class="num">27.3%</td><td><span class="bar" style="width:55%"></span></td></tr>
+<tr class="hl"><td class="num">2026-04</td><td class="num">182</td><td class="num">66</td><td class="num"><b>33</b></td><td class="num">50.0%</td><td><span class="bar" style="width:100%"></span></td></tr>
+<tr class="hl"><td class="num">2026-05</td><td class="num">161</td><td class="num">62</td><td class="num"><b>28</b></td><td class="num">45.2%</td><td><span class="bar" style="width:85%"></span></td></tr>
+<tr class="hl"><td class="num">2026-06</td><td class="num">201</td><td class="num">79</td><td class="num"><b>26</b></td><td class="num">32.9%</td><td><span class="bar" style="width:79%"></span></td></tr>
+<tr class="hl"><td class="num">2026-07</td><td class="num">157</td><td class="num">61</td><td class="num"><b>19</b></td><td class="num">31.1%</td><td><span class="bar" style="width:58%"></span></td></tr>
+<tr class="hl"><td class="num">2026-08</td><td class="num">107</td><td class="num">43</td><td class="num"><b>9</b></td><td class="num">20.9%</td><td><span class="bar" style="width:27%"></span></td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="6">2026-04の33件・50.0%が単月ピーク。2026-08は25日時点。</td></tr></tfoot>
+  </table></div>
+</section>
+
+<section>
+  <span class="sec-no">② ／ Channel</span>
+  <h2 class="sec">どんな形で獲得できているか</h2>
+  <p class="sec-lede">直近12ヶ月の紙カルテ266件を、電子カルテ既設先707件と並べて比較します。構成比の差が、紙カルテ先に効くチャネルです。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>獲得チャネル</th><th class="num">紙</th><th class="num">構成比</th><th class="num">電子既設</th><th class="num">構成比</th><th>差</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>F_FAX</td><td class="num">37</td><td class="num">14%</td><td class="num">53</td><td class="num">7%</td><td><span class="res won">紙が2.0倍</span></td></tr>
+      <tr><td>M_ナーチャ／CLICK（マスメール）</td><td class="num">42</td><td class="num">16%</td><td class="num">100</td><td class="num">14%</td><td><span class="res open">やや紙寄り</span></td></tr>
+      <tr><td>R_再商談</td><td class="num">41</td><td class="num">15%</td><td class="num">87</td><td class="num">12%</td><td><span class="res open">やや紙寄り</span></td></tr>
+      <tr><td>W_Web流入</td><td class="num">31</td><td class="num">12%</td><td class="num">104</td><td class="num">15%</td><td><span class="res lost">同等</span></td></tr>
+      <tr><td>L_リードリサイクル</td><td class="num">31</td><td class="num">12%</td><td class="num">109</td><td class="num">15%</td><td><span class="res lost">同等</span></td></tr>
+      <tr><td>P_有料メディア</td><td class="num">25</td><td class="num">9%</td><td class="num">67</td><td class="num">9%</td><td><span class="res lost">同等</span></td></tr>
+      <tr><td>LA_リスティング</td><td class="num">18</td><td class="num">7%</td><td class="num">41</td><td class="num">6%</td><td><span class="res lost">同等</span></td></tr>
+      <tr><td>E_イベント</td><td class="num">16</td><td class="num">6%</td><td class="num">63</td><td class="num">9%</td><td><span class="res cancel">電子寄り</span></td></tr>
+      <tr><td>I_代理店・紹介</td><td class="num">6</td><td class="num">2%</td><td class="num">28</td><td class="num">4%</td><td><span class="res cancel">電子寄り</span></td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="6">FAXの内訳は JM診療所リスト・SCUEL診療所リストへの定期配信。紙運用の医院ほどFAXが届くという仮説と整合。</td></tr></tfoot>
+  </table></div>
+
+  <h3>チャネル別の成果</h3>
+  <div class="tw"><table>
+    <caption>紙カルテ266件・直近12ヶ月</caption>
+    <thead><tr><th>チャネル</th><th class="num">アポ</th><th class="num">受注</th><th class="num">受注率</th><th class="num">進行中</th><th class="num">中断</th><th class="num">キャンセル</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>LA_リスティング</td><td class="num">18</td><td class="num">4</td><td class="num">22%</td><td class="num">7</td><td class="num">7</td><td class="num">0</td></tr>
+      <tr class="hl"><td>W_Web流入</td><td class="num">31</td><td class="num">5</td><td class="num">16%</td><td class="num">14</td><td class="num">10</td><td class="num">1</td></tr>
+      <tr><td>R_再商談</td><td class="num">41</td><td class="num">4</td><td class="num">10%</td><td class="num">20</td><td class="num">15</td><td class="num">2</td></tr>
+      <tr><td>M_ナーチャ／CLICK</td><td class="num">42</td><td class="num">2</td><td class="num">5%</td><td class="num">22</td><td class="num">14</td><td class="num">4</td></tr>
+      <tr><td>P_有料メディア</td><td class="num">25</td><td class="num">1</td><td class="num">4%</td><td class="num">12</td><td class="num">11</td><td class="num">1</td></tr>
+      <tr><td>L_リードリサイクル</td><td class="num">31</td><td class="num">1</td><td class="num">3%</td><td class="num">20</td><td class="num">5</td><td class="num">5</td></tr>
+      <tr><td>F_FAX</td><td class="num">37</td><td class="num">1</td><td class="num">3%</td><td class="num">22</td><td class="num">8</td><td class="num">6</td></tr>
+      <tr><td>E_イベント</td><td class="num">16</td><td class="num">0</td><td class="num">0%</td><td class="num">9</td><td class="num">4</td><td class="num">3</td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="7">FAX・リードリサイクルは進行中の比率が高く、結果はこれから。逆にキャンセル率はFAX16%・リードリサイクル16%と高め。</td></tr></tfoot>
+  </table></div>
+
+  <h3>リードソースと発掘元</h3>
+  <div class="tw"><table>
+    <thead><tr><th>リードソースカテゴリ</th><th class="num">件数</th><th class="num">構成比</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>4.Web</td><td class="num">57</td><td class="num">21%</td><td><span class="bar" style="width:100px"></span></td></tr>
+      <tr><td>10.再商談</td><td class="num">44</td><td class="num">17%</td><td><span class="bar" style="width:77px"></span></td></tr>
+      <tr><td>19.マスメール</td><td class="num">39</td><td class="num">15%</td><td><span class="bar" style="width:68px"></span></td></tr>
+      <tr><td>2.FAX</td><td class="num">34</td><td class="num">13%</td><td><span class="bar" style="width:60px"></span></td></tr>
+      <tr><td>9.Wake up商談</td><td class="num">29</td><td class="num">11%</td><td><span class="bar dim" style="width:51px"></span></td></tr>
+      <tr><td>18.有料メディア</td><td class="num">25</td><td class="num">9%</td><td><span class="bar dim" style="width:44px"></span></td></tr>
+      <tr><td>3.イベント</td><td class="num">14</td><td class="num">5%</td><td><span class="bar dim" style="width:25px"></span></td></tr>
+    </tbody>
+  </table></div>
+  <p>発掘元で見ると、紙カルテ先は<b>新規リードが205件（77%）</b>。カルテ中断からの掘り起こしは22件、オンライン診療既存からのクロスセルは17件にとどまります。電子カルテ既設先（新規リード70%・OL既存15%）と比べても、<b>紙カルテ先はまだ社内に履歴のない「初回接触」で取れている</b>のが特徴です。</p>
+
+  <h3>誰が取っているか</h3>
+  <div class="tw"><table>
+    <caption>直近12ヶ月・紙カルテ266件のアポ獲得者（上位）</caption>
+    <thead><tr><th>アポ獲得者</th><th class="num">件数</th><th></th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>飛田 菜々花</td><td class="num">71</td><td><span class="bar" style="width:100px"></span></td></tr>
+      <tr><td>（獲得者フィールド空欄）</td><td class="num">67</td><td><span class="bar dim" style="width:94px"></span></td></tr>
+      <tr><td>岡田 健吾</td><td class="num">44</td><td><span class="bar" style="width:62px"></span></td></tr>
+      <tr><td>松澤 恵太</td><td class="num">35</td><td><span class="bar" style="width:49px"></span></td></tr>
+      <tr><td>岡田 雄太</td><td class="num">13</td><td><span class="bar dim" style="width:18px"></span></td></tr>
+      <tr><td>番場 円香</td><td class="num">7</td><td><span class="bar dim" style="width:10px"></span></td></tr>
+      <tr><td>久保田 やや子</td><td class="num">6</td><td><span class="bar dim" style="width:8px"></span></td></tr>
+      <tr><td>野坂 汰門</td><td class="num">4</td><td><span class="bar dim" style="width:6px"></span></td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="3">ナーチャリング3名の合計は23件で全体の9%。獲得者フィールドが空の67件（25%）は、記録上どこにも紐づいていない。</td></tr></tfoot>
+  </table></div>
+</section>
+
+<section>
+  <span class="sec-no">③ ／ Trigger</span>
+  <h2 class="sec">何をきっかけに動いているか</h2>
+  <p class="sec-lede">紙カルテ266件の商談記録本文からトリガーを抽出しました（複数該当あり）。「検討背景」欄そのものは「電子化」「電子化に向けて」と書かれるだけのケースが63件あり、実質的な理由は本文に散っています。</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>トリガー</th><th class="num">言及件数</th><th class="num">構成比</th><th></th><th>典型的な語られ方</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>業務効率化・負担軽減</td><td class="num">64</td><td class="num">24%</td><td><span class="bar" style="width:100px"></span></td><td class="sm">記載・保管の手間、探す時間、レセプト作業の負担</td></tr>
+      <tr class="hl"><td>承継・継承</td><td class="num">61</td><td class="num">23%</td><td><span class="bar" style="width:95px"></span></td><td class="sm">家族継承・第三者承継のタイミングでシステムを一新</td></tr>
+      <tr class="hl"><td>レセコン更新・保守切れ</td><td class="num">59</td><td class="num">22%</td><td><span class="bar" style="width:92px"></span></td><td class="sm">レセコンの保守期限、EOS、更新見積もりが高い</td></tr>
+      <tr><td>IT導入補助金</td><td class="num">33</td><td class="num">12%</td><td><span class="bar" style="width:52px"></span></td><td class="sm">補助金の申請期限に合わせて検討開始</td></tr>
+      <tr><td>スタッフ・人手</td><td class="num">25</td><td class="num">9%</td><td><span class="bar dim" style="width:39px"></span></td><td class="sm">受付の人手不足、スタッフの退職・採用難</td></tr>
+      <tr><td>院長交代・世代交代</td><td class="num">22</td><td class="num">8%</td><td><span class="bar dim" style="width:34px"></span></td><td class="sm">息子・娘への代替わり</td></tr>
+      <tr><td>マイナ保険証・オンライン資格確認</td><td class="num">21</td><td class="num">8%</td><td><span class="bar dim" style="width:33px"></span></td><td class="sm">制度対応をきっかけに全体を見直し</td></tr>
+      <tr><td>新規開業・分院</td><td class="num">20</td><td class="num">8%</td><td><span class="bar dim" style="width:31px"></span></td><td class="sm">開業に合わせて最初から電子カルテ</td></tr>
+      <tr><td>電子処方箋</td><td class="num">13</td><td class="num">5%</td><td><span class="bar dim" style="width:20px"></span></td><td class="sm">対応必須化への備え</td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="5">商談種別でも裏づけあり：紙カルテ266件のうち「電子カルテ新規導入」123件、「第3者承継」11件、「家族継承」10件。</td></tr></tfoot>
+  </table></div>
+
+  <div class="callout act">
+    <h4>紙カルテ先の入り口は「代替わり」と「期限」</h4>
+    <p>承継・継承61件と院長交代22件を合わせると83件。レセコン保守切れ59件、補助金33件、マイナ・電子処方箋34件を足した「期限もの」と並んで、紙カルテ先の二大トリガーになっています。<b>紙のままでいる医院は、外から期限が来ないと動かない</b>という構図です。</p>
+    <p>裏を返すと、承継予定・レセコン保守期限・補助金申請期限は、いずれも<b>事前に把握できる情報</b>です。取引先アプリの <code>receipt_computer_update_date</code>（レセコン導入/更新時期）が入っている先を、期限の半年前に叩く運用が作れます。</p>
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">④ ／ Result</span>
+  <h2 class="sec">成果と、これから</h2>
+
+  <div class="tw"><table>
+    <thead><tr><th></th><th class="num">アポ</th><th class="num">受注</th><th class="num">受注率</th><th class="num">進行中</th><th class="num">中断</th><th class="num">キャンセル率</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td>紙カルテ先</td><td class="num">266</td><td class="num">19</td><td class="num">7.1%</td><td class="num">139</td><td class="num">83</td><td class="num">9.0%</td></tr>
+      <tr><td>電子カルテ既設先</td><td class="num">707</td><td class="num">60</td><td class="num">8.5%</td><td class="num">326</td><td class="num">271</td><td class="num">6.5%</td></tr>
+    </tbody>
+    <tfoot><tr><td colspan="7">受注率に大きな差はない。紙カルテ先は進行中が52%（電子既設46%）と多く、判断に時間がかかる分だけ結果が後ろにずれている。</td></tr></tfoot>
+  </table></div>
+
+  <p>紙カルテ先は「競合がいない代わりに、電子化そのものを決めきれない」層です。中断83件のうち、比較対象が他社電子カルテではなく<b>紙のまま様子を見る</b>という結論になったものが相当数含まれます。ここを詰めるには、他社比較ではなく<b>移行の手間と費用の具体化</b>が効きます。</p>
+
+  <ol class="steps">
+    <li>
+      <h4>FAXを紙カルテ向けの主力チャネルとして扱う</h4>
+      <p>紙14% / 電子既設7%と、唯一はっきり差が出たチャネルです。現在はJM診療所・SCUEL診療所リストへの定期配信で月2〜3件のアポ。紙カルテ率が高いリスト（レセコンのみ導入、電子カルテ未導入）へ絞った配信を増やす余地があります。ただしキャンセル率16%と高いため、アポ後のリマインド運用とセットで。</p>
+    </li>
+    <li>
+      <h4>承継・レセコン保守期限を先回りリストにする</h4>
+      <p>トリガー上位の承継61件・保守切れ59件は、いずれも事前に分かる情報です。取引先アプリの「レセコン導入/更新時期」が入っている先と、商談メモに承継予定が記載された先を抽出し、期限6ヶ月前に接触する運用へ。</p>
+    </li>
+    <li>
+      <h4>獲得者が空欄の67件（25%）を潰す</h4>
+      <p>紙カルテアポの4分の1が、アポ獲得者フィールド未入力です。誰の成果か追えないだけでなく、チャネル別の効果測定も歪みます。</p>
+    </li>
+    <li>
+      <h4>現行カルテ欄を必須にする</h4>
+      <p>現行カルテが読み取れるのは商談の53%だけで、そのために紙カルテ比率が±10ポイント動きます。ヒアリング項目「2.現在利用中のカルテ/レセコン」を必須化すれば、この分析は毎月自動で出せるようになります。</p>
+    </li>
+  </ol>
+</section>
+
+<footer>
+  データ元：kintone App29（新規商談）。取得日 2026-08-25。関連ページ：<a href="../lead-recycle/">Karteリードリサイクル診断</a><br>
+  生成ファイル：<code>~/Desktop/Karte_紙カルテ先アポ_直近12ヶ月.csv</code>（266件・医療機関名つき）。<br>
+  注意：紙カルテ判定は商談本文からの推定です。現行カルテの記載がない商談（全体の47%）は判定対象外のため、実際の紙カルテ先はここに出ている数より多い可能性があります。
+</footer>
+</div>
+</body>
+</html>
